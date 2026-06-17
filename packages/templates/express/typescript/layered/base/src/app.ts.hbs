@@ -1,0 +1,18 @@
+import express from "express";
+{{#if hasCors}}import cors from "cors";
+import { corsOptions } from "./config/cors";
+{{/if}}import routes from "./routes/index";
+{{#if hasErrorHandler}}import { errorHandler } from "./shared/errors/error-handler";
+{{/if}}import { notFound } from "./shared/middlewares/not-found";
+
+export function createApp() {
+  const app = express();
+
+  app.use(express.json());
+  {{#if hasCors}}app.use(cors(corsOptions));
+  {{/if}}app.use("{{apiPrefix}}", routes);
+  app.use(notFound);
+  {{#if hasErrorHandler}}app.use(errorHandler);
+  {{/if}}
+  return app;
+}
