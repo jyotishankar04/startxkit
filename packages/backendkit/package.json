@@ -1,0 +1,30 @@
+{
+  "name": "backendkit",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "backendkit": "dist/cli.js"
+  },
+  "main": "dist/cli.js",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@backendkit/core": "workspace:*",
+    "@clack/prompts": "^0.10.1",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "tsdown": "^0.12.9",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
