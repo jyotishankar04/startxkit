@@ -1,0 +1,29 @@
+const {{camelName}}: unknown[] = [];
+
+export class {{pascalName}}Repository {
+  {{#if dependencyInjection}}async findAll(){{else}}static async findAll(){{/if}} {
+    return {{camelName}};
+  }
+
+  {{#if dependencyInjection}}async findById(id: string){{else}}static async findById(id: string){{/if}} {
+    return { id };
+  }
+
+  {{#if dependencyInjection}}async create(payload: unknown){{else}}static async create(payload: unknown){{/if}} {
+    return {
+      id: crypto.randomUUID(),
+      ...(typeof payload === "object" && payload !== null ? payload : {}),
+    };
+  }
+
+  {{#if dependencyInjection}}async update(id: string, payload: unknown){{else}}static async update(id: string, payload: unknown){{/if}} {
+    return {
+      id,
+      ...(typeof payload === "object" && payload !== null ? payload : {}),
+    };
+  }
+
+  {{#if dependencyInjection}}async remove(id: string){{else}}static async remove(id: string){{/if}} {
+    return { id };
+  }
+}
