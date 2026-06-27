@@ -1,0 +1,27 @@
+{{#if hasRepository}}import { {{pascalName}}Repository } from "./{{fileName}}.repository";
+{{/if}}
+
+export class {{pascalName}}Service {
+  {{#if dependencyInjection}}{{#if hasRepository}}constructor(private readonly {{camelName}}Repository: {{pascalName}}Repository) {}
+  {{else}}constructor() {}
+  {{/if}}{{/if}}
+  {{#if dependencyInjection}}async getAll(){{else}}static async getAll(){{/if}} {
+    {{#if hasRepository}}return {{#if dependencyInjection}}this.{{camelName}}Repository{{else}}{{pascalName}}Repository{{/if}}.findAll();{{else}}return [];{{/if}}
+  }
+
+  {{#if dependencyInjection}}async getById(id: string){{else}}static async getById(id: string){{/if}} {
+    {{#if hasRepository}}return {{#if dependencyInjection}}this.{{camelName}}Repository{{else}}{{pascalName}}Repository{{/if}}.findById(id);{{else}}return { id };{{/if}}
+  }
+
+  {{#if dependencyInjection}}async create(payload: unknown){{else}}static async create(payload: unknown){{/if}} {
+    {{#if hasRepository}}return {{#if dependencyInjection}}this.{{camelName}}Repository{{else}}{{pascalName}}Repository{{/if}}.create(payload);{{else}}return { id: crypto.randomUUID(), ...(typeof payload === "object" && payload !== null ? payload : {}) };{{/if}}
+  }
+
+  {{#if dependencyInjection}}async update(id: string, payload: unknown){{else}}static async update(id: string, payload: unknown){{/if}} {
+    {{#if hasRepository}}return {{#if dependencyInjection}}this.{{camelName}}Repository{{else}}{{pascalName}}Repository{{/if}}.update(id, payload);{{else}}return { id, ...(typeof payload === "object" && payload !== null ? payload : {}) };{{/if}}
+  }
+
+  {{#if dependencyInjection}}async remove(id: string){{else}}static async remove(id: string){{/if}} {
+    {{#if hasRepository}}return {{#if dependencyInjection}}this.{{camelName}}Repository{{else}}{{pascalName}}Repository{{/if}}.remove(id);{{else}}return { id };{{/if}}
+  }
+}

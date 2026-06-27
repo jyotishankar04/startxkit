@@ -1,0 +1,13 @@
+{{#if hasEnv}}import "dotenv/config";
+{{/if}}import Fastify from "fastify";
+import { healthRoutes } from "./modules/health/health.route";
+
+const app = Fastify({ logger: {{#if hasLogger}}true{{else}}false{{/if}} });
+const port = Number(process.env.PORT ?? 3000);
+
+app.register(healthRoutes, { prefix: "{{apiPrefix}}/health" });
+
+app.listen({ port, host: "0.0.0.0" }).catch((error) => {
+  app.log.error(error);
+  process.exit(1);
+});
