@@ -1,0 +1,22 @@
+import { Hono } from "hono";
+{{#if dependencyInjection}}{{#if hasRepository}}import { {{pascalName}}Repository } from "./{{fileName}}.repository";
+{{/if}}{{#if hasService}}import { {{pascalName}}Service } from "./{{fileName}}.service";
+{{/if}}{{/if}}
+import { {{pascalName}}Controller } from "./{{fileName}}.controller";
+
+export const {{camelName}}Routes = new Hono();
+{{#if dependencyInjection}}
+{{#if hasRepository}}const {{camelName}}Repository = new {{pascalName}}Repository();
+{{/if}}{{#if hasService}}const {{camelName}}Service = new {{pascalName}}Service({{#if hasRepository}}{{camelName}}Repository{{/if}});
+{{/if}}const {{camelName}}Controller = new {{pascalName}}Controller({{#if hasService}}{{camelName}}Service{{/if}});
+{{/if}}
+
+{{#if crud}}
+{{camelName}}Routes.get("/", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.getAll);
+{{camelName}}Routes.get("/:id", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.getById);
+{{camelName}}Routes.post("/", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.create);
+{{camelName}}Routes.patch("/:id", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.update);
+{{camelName}}Routes.delete("/:id", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.remove);
+{{else}}
+{{camelName}}Routes.get("/", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.index);
+{{/if}}
