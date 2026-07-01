@@ -1,0 +1,15 @@
+import type { Context } from "hono";
+import { AppError } from "./app-error";
+
+export function errorHandler(error: Error, context: Context) {
+  const statusCode = error instanceof AppError ? error.statusCode : 500;
+  const message = error.message || "Internal server error";
+
+  return context.json(
+    {
+      success: false,
+      message,
+    },
+    statusCode as any,
+  );
+}

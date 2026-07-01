@@ -109,7 +109,7 @@ async function createExpressProject(options: ProjectOptions): Promise<void> {
     architecture: options.architecture,
     packageManager: options.packageManager,
     srcDir: "src",
-    moduleDir: "src/modules",
+    moduleDir: options.architecture === "modular" ? "src/modules" : "src",
     apiPrefix: options.apiPrefix,
     validation: options.validation,
     database: null,
@@ -128,6 +128,7 @@ export const expressGenerator: FrameworkGenerator = {
 
 export function moduleVariables(config: StartXKitConfig, options: ModuleOptions) {
   const kebabName = toPluralName(options.name);
+  const isLayered = config.architecture === "layered";
   return {
     ...options,
     name: options.name,
@@ -149,6 +150,10 @@ export function moduleVariables(config: StartXKitConfig, options: ModuleOptions)
     hasValidator: options.layer === "full" && options.validation,
     dependencyInjection: config.dependencyInjection === true,
     crud: options.crud,
+    routeImportPath: isLayered ? `../controllers/${kebabName}.controller` : `./${kebabName}.controller`,
+    serviceImportPath: isLayered ? `../services/${kebabName}.service` : `./${kebabName}.service`,
+    repositoryImportPath: isLayered ? `../repositories/${kebabName}.repository` : `./${kebabName}.repository`,
+    interfaceImportPath: isLayered ? `../interfaces/${kebabName}.interface` : `./${kebabName}.interface`,
   };
 }
 

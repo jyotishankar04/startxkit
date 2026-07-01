@@ -1,0 +1,31 @@
+import { Router } from "express";
+
+const router = Router();
+
+{{#if crud}}
+router.get("/", (_req, res) => {
+  return res.status(200).json({ success: true, message: "{{pascalName}} fetched successfully", data: [] });
+});
+
+router.get("/:id", (req, res) => {
+  return res.status(200).json({ success: true, message: "{{singularPascalName}} fetched successfully", data: { id: req.params.id } });
+});
+
+router.post("/", (req, res) => {
+  return res.status(201).json({ success: true, message: "{{singularPascalName}} created successfully", data: req.body });
+});
+
+router.patch("/:id", (req, res) => {
+  return res.status(200).json({ success: true, message: "{{singularPascalName}} updated successfully", data: { id: req.params.id, ...(typeof req.body === "object" && req.body !== null ? req.body : {}) } });
+});
+
+router.delete("/:id", (req, res) => {
+  return res.status(200).json({ success: true, message: "{{singularPascalName}} deleted successfully", data: { id: req.params.id } });
+});
+{{else}}
+router.get("/", (_req, res) => {
+  return res.status(200).json({ success: true, message: "{{pascalName}} module ready", data: [] });
+});
+{{/if}}
+
+export default router;

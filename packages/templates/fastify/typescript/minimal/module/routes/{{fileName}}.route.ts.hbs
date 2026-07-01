@@ -1,0 +1,13 @@
+import type { FastifyInstance } from "fastify";
+
+export async function {{camelName}}Routes(app: FastifyInstance) {
+  {{#if crud}}
+  app.get("/", async () => ({ success: true, message: "{{pascalName}} fetched successfully", data: [] }));
+  app.get("/:id", async (request) => ({ success: true, message: "{{singularPascalName}} fetched successfully", data: { id: request.params.id } }));
+  app.post("/", async (request, reply) => reply.code(201).send({ success: true, message: "{{singularPascalName}} created successfully", data: request.body }));
+  app.patch("/:id", async (request) => ({ success: true, message: "{{singularPascalName}} updated successfully", data: { id: request.params.id, ...(typeof request.body === "object" && request.body !== null ? request.body : {}) } }));
+  app.delete("/:id", async (request) => ({ success: true, message: "{{singularPascalName}} deleted successfully", data: { id: request.params.id } }));
+  {{else}}
+  app.get("/", async () => ({ success: true, message: "{{pascalName}} module ready", data: [] }));
+  {{/if}}
+}

@@ -1,0 +1,22 @@
+import type { FastifyInstance } from "fastify";
+{{#if dependencyInjection}}{{#if hasRepository}}import { {{pascalName}}Repository } from "../repositories/{{fileName}}.repository";
+{{/if}}{{#if hasService}}import { {{pascalName}}Service } from "../services/{{fileName}}.service";
+{{/if}}{{/if}}
+import { {{pascalName}}Controller } from "../controllers/{{fileName}}.controller";
+
+export async function {{camelName}}Routes(app: FastifyInstance) {
+  {{#if dependencyInjection}}
+  {{#if hasRepository}}const {{camelName}}Repository = new {{pascalName}}Repository();
+  {{/if}}{{#if hasService}}const {{camelName}}Service = new {{pascalName}}Service({{#if hasRepository}}{{camelName}}Repository{{/if}});
+  {{/if}}const {{camelName}}Controller = new {{pascalName}}Controller({{#if hasService}}{{camelName}}Service{{/if}});
+  {{/if}}
+  {{#if crud}}
+  app.get("/", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.getAll);
+  app.get("/:id", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.getById);
+  app.post("/", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.create);
+  app.patch("/:id", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.update);
+  app.delete("/:id", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.remove);
+  {{else}}
+  app.get("/", {{#if dependencyInjection}}{{camelName}}Controller{{else}}{{pascalName}}Controller{{/if}}.index);
+  {{/if}}
+}

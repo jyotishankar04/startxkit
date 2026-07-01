@@ -1,0 +1,14 @@
+import type { Context } from "hono";
+
+export class HealthController {
+  static check(context: Context) {
+    return context.json({
+      success: true,
+      message: "Server is healthy",
+      data: {
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+      },
+    });
+  }
+}

@@ -1,0 +1,14 @@
+import type { FastifyReply, FastifyRequest } from "fastify";
+
+export class HealthController {
+  static check(_request: FastifyRequest, reply: FastifyReply) {
+    return reply.code(200).send({
+      success: true,
+      message: "Server is healthy",
+      data: {
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+      },
+    });
+  }
+}

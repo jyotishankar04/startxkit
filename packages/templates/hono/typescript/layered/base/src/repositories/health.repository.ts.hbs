@@ -1,0 +1,10 @@
+import type { HealthStatus } from "../interfaces/health.interface";
+
+export class HealthRepository {
+  static getStatus(): HealthStatus {
+    return {
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+    };
+  }
+}

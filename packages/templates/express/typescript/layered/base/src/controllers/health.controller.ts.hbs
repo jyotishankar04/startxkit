@@ -1,0 +1,10 @@
+import type { Request, Response } from "express";
+import { ApiResponse } from "../shared/response/api-response";
+import { HealthService } from "../services/health.service";
+
+export class HealthController {
+  static check(_req: Request, res: Response) {
+    const data = HealthService.check();
+    return res.status(200).json(ApiResponse.success("Server is healthy", data));
+  }
+}

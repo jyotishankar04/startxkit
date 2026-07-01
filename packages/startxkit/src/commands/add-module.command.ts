@@ -16,7 +16,10 @@ export async function addModuleCommand(name: string): Promise<void> {
   try {
     const config = await readConfig();
     const moduleName = toPluralName(name);
-    const modulePath = path.join(process.cwd(), config.moduleDir, moduleName);
+    const modulePath =
+      config.architecture === "modular"
+        ? path.join(process.cwd(), config.moduleDir, moduleName)
+        : path.join(process.cwd(), config.srcDir, "routes", `${moduleName}.route.ts`);
     let overwrite = false;
 
     if (await fs.pathExists(modulePath)) {

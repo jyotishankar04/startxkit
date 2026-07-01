@@ -46,6 +46,12 @@ export async function createProjectFromTemplates(
     await fs.remove(path.join(options.targetDir, "docker-compose.yml"));
   }
   if (!options.addEnv) await fs.remove(path.join(options.targetDir, ".env.example"));
+  if (!options.addCors) await fs.remove(path.join(options.targetDir, "src", "config", "cors.ts"));
+  if (!options.addEnv) await fs.remove(path.join(options.targetDir, "src", "config", "env.ts"));
+  if (!options.addErrorHandler) {
+    await fs.remove(path.join(options.targetDir, "src", "shared", "errors", "app-error.ts"));
+    await fs.remove(path.join(options.targetDir, "src", "shared", "errors", "error-handler.ts"));
+  }
 
   const dependencies: Record<string, string> =
     framework === "fastify"
@@ -54,6 +60,9 @@ export async function createProjectFromTemplates(
           hono: fallbackDependencyVersion("hono"),
           "@hono/node-server": fallbackDependencyVersion("@hono/node-server"),
         };
+  if (options.addCors && framework === "fastify") {
+    dependencies["@fastify/cors"] = fallbackDependencyVersion("@fastify/cors");
+  }
   if (options.addEnv) dependencies.dotenv = fallbackDependencyVersion("dotenv");
   if (options.validation === "zod") dependencies.zod = fallbackDependencyVersion("zod");
   if (options.logger === "pino") dependencies.pino = fallbackDependencyVersion("pino");
@@ -93,7 +102,7 @@ export async function createProjectFromTemplates(
     architecture: options.architecture,
     packageManager: options.packageManager,
     srcDir: "src",
-    moduleDir: "src/modules",
+    moduleDir: options.architecture === "modular" ? "src/modules" : "src",
     apiPrefix: options.apiPrefix,
     validation: options.validation,
     database: null,
@@ -110,9 +119,17 @@ export async function addModuleFromTemplates(
   options: ModuleOptions,
 ): Promise<string[]> {
   const projectRoot = options.cwd ?? process.cwd();
-  const targetDir = path.join(projectRoot, config.moduleDir, toPluralName(options.name));
+  const kebabName = toPluralName(options.name);
+  const targetDir =
+    config.architecture === "layered" || config.architecture === "minimal"
+      ? path.join(projectRoot, config.srcDir)
+      : path.join(projectRoot, config.moduleDir, kebabName);
+  const existsPath =
+    config.architecture === "layered" || config.architecture === "minimal"
+      ? path.join(projectRoot, config.srcDir, "routes", `${kebabName}.route.ts`)
+      : targetDir;
 
-  if ((await fs.pathExists(targetDir)) && !options.overwrite) {
+  if ((await fs.pathExists(existsPath)) && !options.overwrite) {
     throw new StartXKitError(`Module "${options.name}" already exists.`);
   }
 
@@ -125,22 +142,34 @@ export async function addModuleFromTemplates(
     targetDir,
     moduleVariables(config, options),
   );
-  const kebabName = toPluralName(options.name);
   const removed: string[] = [];
-  if (options.layer === "route-controller") {
-    removed.push(`${kebabName}.service.ts`, `${kebabName}.repository.ts`);
+  const filePath = (folder: string, suffix: string) =>
+    config.architecture === "layered"
+      ? path.join(folder, `${kebabName}.${suffix}.ts`)
+      : `${kebabName}.${suffix}.ts`;
+
+  if (config.architecture === "minimal") {
+    removed.push(
+      filePath("controllers", "controller"),
+      filePath("services", "service"),
+      filePath("repositories", "repository"),
+      filePath("interfaces", "interface"),
+      filePath("validators", "validation"),
+    );
+  } else if (options.layer === "route-controller") {
+    removed.push(filePath("services", "service"), filePath("repositories", "repository"));
   }
-  if (options.layer === "route-controller-service") {
-    removed.push(`${kebabName}.repository.ts`);
+  if (config.architecture !== "minimal" && options.layer === "route-controller-service") {
+    removed.push(filePath("repositories", "repository"));
   }
-  if (options.layer !== "full") {
-    removed.push(`${kebabName}.interface.ts`, `${kebabName}.validation.ts`);
+  if (config.architecture !== "minimal" && options.layer !== "full") {
+    removed.push(filePath("interfaces", "interface"), filePath("validators", "validation"));
   }
-  if (!options.validation) removed.push(`${kebabName}.validation.ts`);
+  if (!options.validation) removed.push(filePath("validators", "validation"));
   for (const file of removed) await fs.remove(path.join(targetDir, file));
   await registerSimpleFrameworkRoute(projectRoot, config, kebabName);
   return written.filter(
-    (file) => !removed.some((r) => file.endsWith(path.sep + r)),
+    (file) => !removed.some((r) => file.endsWith(path.join("", r))),
   );
 }
 
@@ -156,14 +185,22 @@ async function registerSimpleFrameworkRoute(
   let content = await fs.readFile(serverPath, "utf8");
 
   if (config.framework === "fastify") {
-    const importLine = `import { ${camelName}Routes } from "./modules/${kebabName}/${kebabName}.route";`;
+    const importPath =
+      config.architecture === "layered" || config.architecture === "minimal"
+        ? `./routes/${kebabName}.route`
+        : `./modules/${kebabName}/${kebabName}.route`;
+    const importLine = `import { ${camelName}Routes } from "${importPath}";`;
     const routeLine = `app.register(${camelName}Routes, { prefix: "${config.apiPrefix}/${kebabName}" });`;
     if (!content.includes(importLine)) content = insertImport(content, importLine);
     if (!content.includes(routeLine)) content = content.replace("\napp.listen", `\n${routeLine}\n\napp.listen`);
   }
 
   if (config.framework === "hono") {
-    const importLine = `import { ${camelName}Routes } from "./modules/${kebabName}/${kebabName}.route";`;
+    const importPath =
+      config.architecture === "layered" || config.architecture === "minimal"
+        ? `./routes/${kebabName}.route`
+        : `./modules/${kebabName}/${kebabName}.route`;
+    const importLine = `import { ${camelName}Routes } from "${importPath}";`;
     const routeLine = `app.route("${config.apiPrefix}/${kebabName}", ${camelName}Routes);`;
     if (!content.includes(importLine)) content = insertImport(content, importLine);
     if (!content.includes(routeLine)) content = content.replace("\nserve({", `\n${routeLine}\n\nserve({`);

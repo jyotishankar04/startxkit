@@ -11,7 +11,7 @@ export class {{pascalName}}Controller {
   }{{#if dependencyInjection}};{{/if}}
 
   {{#if dependencyInjection}}getById = async (context: Context) =>{{else}}static async getById(context: Context){{/if}} {
-    const id = context.req.param("id");
+    const id = String(context.req.param("id"));
     {{#if hasService}}const data = await {{#if dependencyInjection}}this.{{camelName}}Service{{else}}{{pascalName}}Service{{/if}}.getById(id);{{else}}const data = { id };{{/if}}
     return context.json({ success: true, message: "{{singularPascalName}} fetched successfully", data }, 200);
   }{{#if dependencyInjection}};{{/if}}
@@ -23,14 +23,14 @@ export class {{pascalName}}Controller {
   }{{#if dependencyInjection}};{{/if}}
 
   {{#if dependencyInjection}}update = async (context: Context) =>{{else}}static async update(context: Context){{/if}} {
-    const id = context.req.param("id");
+    const id = String(context.req.param("id"));
     const payload = await context.req.json().catch(() => ({}));
     {{#if hasService}}const data = await {{#if dependencyInjection}}this.{{camelName}}Service{{else}}{{pascalName}}Service{{/if}}.update(id, payload);{{else}}const data = { id, ...(typeof payload === "object" && payload !== null ? payload : {}) };{{/if}}
     return context.json({ success: true, message: "{{singularPascalName}} updated successfully", data }, 200);
   }{{#if dependencyInjection}};{{/if}}
 
   {{#if dependencyInjection}}remove = async (context: Context) =>{{else}}static async remove(context: Context){{/if}} {
-    const id = context.req.param("id");
+    const id = String(context.req.param("id"));
     {{#if hasService}}const data = await {{#if dependencyInjection}}this.{{camelName}}Service{{else}}{{pascalName}}Service{{/if}}.remove(id);{{else}}const data = { id };{{/if}}
     return context.json({ success: true, message: "{{singularPascalName}} deleted successfully", data }, 200);
   }{{#if dependencyInjection}};{{/if}}

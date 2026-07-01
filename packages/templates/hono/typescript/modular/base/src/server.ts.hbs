@@ -1,15 +1,24 @@
 {{#if hasEnv}}import "dotenv/config";
 {{/if}}import { serve } from "@hono/node-server";
+{{#if hasCors}}import { cors } from "hono/cors";
+import { corsOptions } from "./config/cors";
+{{/if}}
 import { Hono } from "hono";
+{{#if hasEnv}}import { env } from "./config/env";
+{{/if}}{{#if hasErrorHandler}}import { errorHandler } from "./shared/errors/error-handler";
+{{/if}}
 import { healthRoutes } from "./modules/health/health.route";
 {{#if isPino}}import pino from "pino";
 {{/if}}
 
 const app = new Hono();
-const port = Number(process.env.PORT ?? 4000);
+const port = {{#if hasEnv}}env.PORT{{else}}Number(process.env.PORT ?? 4000){{/if}};
 {{#if isPino}}const logger = pino();
 {{/if}}
 
+{{#if hasCors}}app.use("*", cors(corsOptions));
+{{/if}}{{#if hasErrorHandler}}app.onError(errorHandler);
+{{/if}}
 app.route("{{apiPrefix}}/health", healthRoutes);
 
 serve({ fetch: app.fetch, port }, () => {
