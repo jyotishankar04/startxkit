@@ -1,0 +1,40 @@
+---
+title: info
+description: Print your project's current StartXKit configuration.
+---
+
+The `info` command prints your project's current configuration as defined in `startxkit.config.json`. Useful for verifying settings at a glance.
+
+## Usage
+
+```sh
+npx startxkit info
+```
+
+## Output Fields
+
+- **Framework** — Express, Fastify, or Hono
+- **Language** — TypeScript (JavaScript coming soon)
+- **Architecture** — minimal, modular, or layered
+- **Module directory** — where feature modules live (`src/modules`)
+- **API prefix** — global route prefix (`/api/v1`, `/api`, or none)
+- **Validation** — Zod or none
+- **Auth** — currently shows as disabled
+- **Database** — currently shows as disabled
+- **ORM** — currently shows as disabled
+
+## Example Output
+
+```text
+Framework:    express
+Language:     typescript
+Architecture: modular
+Module Dir:   src/modules
+API Prefix:   /api/v1
+Validation:   zod
+Auth:         disabled
+Database:     disabled
+ORM:          disabled
+```
+
+*Auth, database, and ORM are included for future compatibility and always show as disabled in the current release.*

@@ -1,0 +1,47 @@
+---
+title: doctor
+description: Run diagnostic checks on your StartXKit project configuration.
+---
+
+The `doctor` command runs a diagnostic check on your StartXKit project to ensure everything is configured correctly. Use it to catch misconfigurations early.
+
+## Usage
+
+```sh
+npx startxkit doctor
+```
+
+## Checks Performed
+
+- **Config file** — verifies `startxkit.config.json` exists and is valid JSON
+- **Package file** — verifies `package.json` exists
+- **Module directory** — confirms the configured module directory exists
+- **Framework** — validates the framework is one of `express`, `fastify`, or `hono`
+- **Architecture** — validates the architecture is `minimal`, `modular`, or `layered`
+- **Package manager** — validates it is `pnpm`, `npm`, `yarn`, or `bun`
+
+## Example Output
+
+```text
+✓ startxkit.config.json found
+✓ package.json found
+✓ Module directory "src/modules" exists
+✓ Framework: express
+✓ Architecture: modular
+✓ Package manager: pnpm
+
+All checks passed!
+```
+
+## Troubleshooting
+
+If any check fails, you'll see a `✗` marker with a description:
+
+```text
+✓ startxkit.config.json found
+✗ package.json not found — run "npm init" first
+✓ Module directory "src/modules" exists
+✗ Unknown framework "koa" in config
+```
+
+Fix the reported issues and run `npx startxkit doctor` again.

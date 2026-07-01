@@ -1,0 +1,49 @@
+---
+title: Minimal Architecture
+description: The simplest project layout — flat structure with route handlers in a single file per module.
+---
+
+The minimal architecture is the simplest project layout — a flat structure where route handlers and logic live in a single file per module. No controllers, services, or repositories.
+
+## When to Use
+
+- Microservices with a small surface area
+- Rapid prototypes and proof-of-concepts
+- Single-purpose APIs with minimal business logic
+- Teams that prefer simplicity over abstraction
+
+## Structure Example
+
+```text
+src/
+  app.ts
+  server.ts
+  config/
+  modules/
+    health/
+      health.route.ts       # Routes + handlers in one file
+    users/
+      users.route.ts
+  routes/
+    index.ts
+```
+
+## Route File Example
+
+```ts
+import { Router } from "express";
+
+const router = Router();
+
+router.get("/", (req, res) => {
+  res.json([{ id: 1, name: "Alice" }]);
+});
+
+router.post("/", (req, res) => {
+  res.status(201).json({ id: 2, ...req.body });
+});
+
+export default router;
+```
+
+The trade-off is simplicity vs scalability. As your module grows, you may want to migrate to the modular or layered architecture.

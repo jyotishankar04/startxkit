@@ -1,0 +1,54 @@
+---
+title: Express
+description: Generate production-ready Express projects with layered architecture and middleware support.
+---
+
+Express is the most popular Node.js framework. StartXKit generates a production-ready Express project with a clean layered structure and middleware support out of the box.
+
+## Quick Start
+
+```sh
+npm create startxkit@latest
+```
+
+Select **Express** when prompted for framework.
+
+## Generated Structure (Layered)
+
+```text
+src/
+  app.ts                # Express app factory with middleware setup
+  server.ts             # Server entry point
+  config/               # Env vars, CORS config
+  shared/               # Error types, middlewares, utilities
+  modules/              # Feature modules
+  routes/
+    index.ts            # Central route registration
+```
+
+## Route Example
+
+```ts
+import { Router } from "express";
+import { UsersController } from "./users.controller";
+
+const router = Router();
+const controller = new UsersController();
+
+router.get("/", controller.getAll);
+router.post("/", controller.create);
+router.get("/:id", controller.getById);
+router.patch("/:id", controller.update);
+router.delete("/:id", controller.delete);
+
+export default router;
+```
+
+## Dependencies
+
+- `express` — HTTP framework
+- `cors` — Cross-origin resource sharing
+- `dotenv` — Environment variable loading
+- `zod` — Request/response validation
+- `pino` — Structured logging
+- `vitest` — Unit and integration testing

@@ -1,0 +1,51 @@
+---
+title: Hono
+description: Generate lightweight, edge-ready Hono projects with router-based patterns.
+---
+
+Hono is a lightweight, ultrafast web framework designed for edge runtimes and Bun/Deno. StartXKit generates a Hono project using its router-based pattern for clean, composable APIs.
+
+## Quick Start
+
+```sh
+npm create startxkit@latest
+```
+
+Select **Hono** when prompted for framework.
+
+## Router Pattern
+
+Routes are defined using Hono's chained router methods:
+
+```ts
+import { Hono } from "hono";
+import { UsersController } from "./users.controller";
+
+const usersRouter = new Hono();
+const controller = new UsersController();
+
+usersRouter.get("/", ...controller.getAll);
+usersRouter.post("/", ...controller.create);
+usersRouter.get("/:id", ...controller.getById);
+usersRouter.patch("/:id", ...controller.update);
+usersRouter.delete("/:id", ...controller.delete);
+
+export default usersRouter;
+```
+
+## Mounting Routes
+
+```ts
+import usersRouter from "./modules/users";
+
+app.route("/users", usersRouter);
+```
+
+## Dependencies
+
+- `hono` — Ultrafast web framework
+- `@hono/node-server` — Node.js adapter for Hono
+- `dotenv` — Environment variable loading
+- `zod` — Request/response validation
+- `pino` — Structured logging
+- `vitest` — Unit and integration testing

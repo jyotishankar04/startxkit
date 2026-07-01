@@ -1,0 +1,44 @@
+---
+title: Modular Architecture
+description: Feature-based modules with route and controller files for clear separation of concerns.
+---
+
+The modular architecture organizes code into feature-based modules, each with its own route and controller files. Shared utilities and middlewares live outside modules.
+
+## When to Use
+
+- Medium-sized APIs with multiple feature areas
+- Teams of 2–5 developers
+- Projects that benefit from clear module boundaries
+- When you want separation of route definitions and handler logic
+
+## Structure Example
+
+```text
+src/
+  app.ts
+  server.ts
+  config/
+  shared/
+    errors/
+    middlewares/
+    utils/
+  modules/
+    health/
+      health.route.ts
+      health.controller.ts
+    users/
+      users.route.ts
+      users.controller.ts
+  routes/
+    index.ts
+```
+
+## Module Files
+
+Each module contains two files:
+
+- **`.route.ts`** — defines the HTTP routes and wires controllers
+- **`.controller.ts`** — request handler methods, input validation, response formatting
+
+This pattern gives you clean separation without the overhead of a full layered architecture. Upgrade to layered when your business logic needs a dedicated service layer.

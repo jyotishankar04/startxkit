@@ -1,0 +1,43 @@
+---
+title: Roadmap
+description: What's available today and what's coming next for StartXKit.
+---
+
+StartXKit is under active development. Here's what's available today and what's coming next.
+
+## MVP Features (Available Now)
+
+- Interactive project scaffolding with `npm create startxkit@latest`
+- 3 framework options: Express, Fastify, Hono
+- 3 architecture options: Minimal, Modular, Layered
+- Module generation with `npx startxkit add module`
+- Layer depth options: route-controller, +service, +repository, full
+- Built-in health check module
+- Configurable API prefix
+- Optional CORS, env config, Zod validation, Pino logging, error handler
+- Optional DI (dependency injection) setup
+- Dockerfile generation
+- Vitest test setup
+- TypeScript support
+- Package manager selection: pnpm, npm, yarn, bun
+- CLI tools: `doctor`, `info`
+
+## Coming Soon
+
+- **Authentication** — JWT, session, and OAuth scaffolding
+- **Database integration** — PostgreSQL, MySQL, SQLite, MongoDB
+- **ORM support** — Drizzle, Prisma
+- **NestJS framework** — modular, opinionated framework option
+- **JavaScript templates** — scaffold projects without TypeScript
+- **Migration generator** — `npx startxkit add migration`
+- **OpenAPI/Swagger** — auto-generated API docs from route definitions
+
+## Not Supported in MVP
+
+- GraphQL endpoints
+- WebSocket support
+- gRPC services
+- Monorepo tooling (beyond basic module structure)
+- Serverless/deployment templates
+
+Have a feature request? Open an issue on [GitHub](https://github.com/anomalyco/startxkit).

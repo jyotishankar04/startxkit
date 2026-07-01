@@ -1,0 +1,59 @@
+---
+title: Layered Architecture
+description: Full MVC-inspired stack with controllers, services, and repositories for production APIs.
+---
+
+The layered architecture implements a full MVC-inspired stack with controllers, services, and repositories. It is the most structured option, designed for production APIs with complex business logic.
+
+## When to Use
+
+- Large APIs with complex business rules
+- Teams of 5+ developers
+- Projects that need a dedicated data access layer
+- When maintainability and testability are top priorities
+
+## Structure Example (Full)
+
+```text
+src/
+  app.ts
+  server.ts
+  config/
+  shared/
+    errors/
+    middlewares/
+    utils/
+    interfaces/
+  modules/
+    health/
+      health.route.ts
+      health.controller.ts
+    users/
+      users.route.ts
+      users.controller.ts
+      users.service.ts
+      users.repository.ts
+      users.interface.ts
+      users.dto.ts
+  routes/
+    index.ts
+```
+
+## Module Layer Options
+
+When you run `npx startxkit add module`, you can choose how deep to go:
+
+- **route-controller** — minimal, just routes and controllers
+- **+service** — adds a service for business logic
+- **+repository** — adds a repository for data access
+- **full** — service, repository, interfaces, and DTOs
+
+## Responsibility Flow
+
+```text
+Request → Route → Controller → Service → Repository
+                                        ↓
+                                    Response
+```
+
+Each layer has a single responsibility. Controllers handle HTTP concerns, services contain business logic, and repositories manage data access — making every layer independently testable.

@@ -1,0 +1,55 @@
+---
+title: add module
+description: Generate a new feature module with routes, controllers, services, and repositories.
+---
+
+The `add module` command generates a new feature module in your StartXKit project with routes, controllers, services, and repositories — depending on the layer depth you choose.
+
+## Usage
+
+```sh
+npx startxkit add module users
+```
+
+## Module Layer Options
+
+When you run the command, you're prompted to choose a layer option:
+
+- **route-controller** — route file + controller file
+- **+service** — route, controller, and service (business logic layer)
+- **+repository** — route, controller, service, and repository (data access layer)
+- **full** — route, controller, service, repository, interfaces, and DTOs
+
+## Generated CRUD Endpoints
+
+Each module comes with standard REST endpoints out of the box:
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/users` | List all users |
+| POST | `/users` | Create a new user |
+| GET | `/users/:id` | Get user by ID |
+| PATCH | `/users/:id` | Update user by ID |
+| DELETE | `/users/:id` | Delete user by ID |
+
+## Generated File Tree
+
+After running the command with the `full` layer option, your project looks like:
+
+```text
+src/
+  modules/
+    users/
+      users.route.ts
+      users.controller.ts
+      users.service.ts
+      users.repository.ts
+      users.interface.ts
+      users.dto.ts
+```
+
+For lighter options, only the selected files are generated (e.g. `route-controller` generates only `.route.ts` and `.controller.ts`).
+
+## Automatic Route Registration
+
+The module's route file is automatically registered in the central `routes/index.ts` file. No manual wiring required — your endpoints are immediately available after generation.

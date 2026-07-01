@@ -1,0 +1,45 @@
+---
+title: Getting Started
+description: Install and create your first StartXKit project in under a minute.
+---
+
+## Installation
+
+Run the create command:
+
+```sh
+npm create startxkit@latest
+```
+
+This launches an interactive prompt that guides you through project setup.
+
+## Creation Flow
+
+The CLI will ask you these questions:
+
+1. **Project name** — defaults to `my-api`
+2. **Language** — TypeScript (JavaScript coming soon)
+3. **Framework** — Express, Fastify, or Hono
+4. **Architecture** — Minimal, Modular, or Layered
+5. **API prefix** — `/api/v1`, `/api`, none, or custom
+6. **Package manager** — pnpm, npm, yarn, or bun
+7. **Add CORS?** — yes/no
+8. **Add env config?** — yes/no
+9. **Add request validation?** — Zod or None
+10. **Add logger?** — Console, Pino, or None
+11. **Add error handler?** — yes/no
+12. **Add dependency injection?** — yes/no
+13. **Add testing setup?** — Vitest or None
+14. **Add Docker?** — yes/no
+15. **Install dependencies now?** — yes/no
+
+A summary note is shown before generation — confirm to proceed.
+
+## After Creation
+
+```sh
+cd my-api
+pnpm dev
+```
+
+Visit `http://localhost:3000/api/v1/health` to verify.

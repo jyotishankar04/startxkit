@@ -1,0 +1,15 @@
+{
+  "title": "StartXKit",
+  "pages": [
+    "index",
+    "getting-started",
+    "---CLI Commands---",
+    "cli",
+    "---Frameworks---",
+    "frameworks",
+    "---Architectures---",
+    "architectures",
+    "---More---",
+    "roadmap"
+  ]
+}

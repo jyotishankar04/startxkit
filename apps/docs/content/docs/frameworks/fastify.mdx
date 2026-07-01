@@ -1,0 +1,51 @@
+---
+title: Fastify
+description: Generate high-performance Fastify projects with plugin architecture and schema validation.
+---
+
+Fastify is a high-performance Node.js framework with a plugin-based architecture. StartXKit generates a Fastify project that leverages plugins for clean separation of concerns.
+
+## Quick Start
+
+```sh
+npm create startxkit@latest
+```
+
+Select **Fastify** when prompted for framework.
+
+## Plugin Pattern
+
+Each module is registered as a Fastify plugin, scoped with a prefix:
+
+```ts
+import { FastifyPluginAsync } from "fastify";
+import { UsersController } from "./users.controller";
+
+const usersPlugin: FastifyPluginAsync = async (fastify) => {
+  const controller = new UsersController();
+
+  fastify.get("/", controller.getAll);
+  fastify.post("/", controller.create);
+  fastify.get("/:id", controller.getById);
+  fastify.patch("/:id", controller.update);
+  fastify.delete("/:id", controller.delete);
+};
+
+export default usersPlugin;
+```
+
+## App Registration
+
+```ts
+import usersPlugin from "./modules/users";
+
+app.register(usersPlugin, { prefix: "/users" });
+```
+
+## Dependencies
+
+- `fastify` — High-performance HTTP framework
+- `dotenv` — Environment variable loading
+- `zod` — Request/response validation
+- `pino` — Structured logging (built into Fastify)
+- `vitest` — Unit and integration testing
