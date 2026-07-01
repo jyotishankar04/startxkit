@@ -117,7 +117,9 @@ export async function runCreate(): Promise<void> {
     );
     const apiPrefix =
       apiChoice === "custom"
-        ? String(abortIfCancel(await text({ message: "Custom API prefix", defaultValue: "/api/v1" })))
+        ? String(
+            abortIfCancel(await text({ message: "Custom API prefix", defaultValue: "/api/v1" })),
+          )
         : apiChoice;
     const detected = detectPackageManager();
     const packageManager = abortIfCancel(
@@ -155,9 +157,14 @@ export async function runCreate(): Promise<void> {
         initialValue: "console",
       }),
     );
-    const addErrorHandler = abortIfCancel(await confirm({ message: "Add error handler?", initialValue: true }));
+    const addErrorHandler = abortIfCancel(
+      await confirm({ message: "Add error handler?", initialValue: true }),
+    );
     const dependencyInjection = abortIfCancel(
-      await confirm({ message: "Use dependency injection?", initialValue: architecture === "layered" }),
+      await confirm({
+        message: "Use dependency injection?",
+        initialValue: architecture === "layered",
+      }),
     );
     const addTesting = abortIfCancel(
       await select<boolean>({
