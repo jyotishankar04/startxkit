@@ -1,13 +1,13 @@
 import fs from "fs-extra";
 import path from "node:path";
-import type { BackendKitConfig } from "../../types/config";
+import type { StartXKitConfig } from "../../types/config";
 import type { ModuleOptions } from "../../types/module-options";
 import { copyTemplate } from "../../template-engine/copy-template";
-import { BackendKitError } from "../../utils/errors";
+import { StartXKitError } from "../../utils/errors";
 import { toPluralName } from "../../utils/case";
 import { moduleVariables, resolveExpressModuleTemplate } from "./express-project.generator";
 
-async function ensureRoutesIndex(projectRoot: string, config: BackendKitConfig): Promise<void> {
+async function ensureRoutesIndex(projectRoot: string, config: StartXKitConfig): Promise<void> {
   const routesPath = path.join(projectRoot, config.srcDir, "routes", "index.ts");
   if (!(await fs.pathExists(routesPath))) {
     await fs.ensureDir(path.dirname(routesPath));
@@ -30,7 +30,7 @@ async function ensureRoutesIndex(projectRoot: string, config: BackendKitConfig):
 
 async function registerModuleRoute(
   projectRoot: string,
-  config: BackendKitConfig,
+  config: StartXKitConfig,
   moduleName: string,
 ): Promise<void> {
   const kebabName = toPluralName(moduleName);
@@ -55,7 +55,7 @@ async function registerModuleRoute(
 }
 
 export async function addExpressModule(
-  config: BackendKitConfig,
+  config: StartXKitConfig,
   options: ModuleOptions,
 ): Promise<string[]> {
   const projectRoot = options.cwd ?? process.cwd();
@@ -63,7 +63,7 @@ export async function addExpressModule(
   const targetDir = path.join(projectRoot, config.moduleDir, kebabName);
 
   if ((await fs.pathExists(targetDir)) && !options.overwrite) {
-    throw new BackendKitError(`Module "${kebabName}" already exists.`);
+    throw new StartXKitError(`Module "${kebabName}" already exists.`);
   }
 
   await fs.ensureDir(targetDir);

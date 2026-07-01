@@ -30,7 +30,7 @@ function baseOptions(targetDir: string): ProjectOptions {
 }
 
 async function makeTempDir() {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "backendkit-test-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "startxkit-test-"));
   tempDirs.push(dir);
   return dir;
 }

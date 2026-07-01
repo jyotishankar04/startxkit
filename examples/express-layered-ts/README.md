@@ -3,7 +3,7 @@
 Generate this example locally with:
 
 ```bash
-npm create backendkit@latest
+npm create startxkit@latest
 ```
 
 Choose Express, TypeScript, and Layered.

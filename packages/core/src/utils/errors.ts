@@ -1,10 +1,10 @@
-export class BackendKitError extends Error {
+export class StartXKitError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "BackendKitError";
+    this.name = "StartXKitError";
   }
 }
 
-export function isBackendKitError(error: unknown): error is BackendKitError {
-  return error instanceof BackendKitError;
+export function isStartXKitError(error: unknown): error is StartXKitError {
+  return error instanceof StartXKitError;
 }

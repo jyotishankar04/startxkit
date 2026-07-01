@@ -1,12 +1,12 @@
 import fs from "fs-extra";
 import path from "node:path";
-import type { BackendKitConfig, Framework } from "../../types/config";
+import type { StartXKitConfig, Framework } from "../../types/config";
 import type { ModuleOptions } from "../../types/module-options";
 import type { ProjectOptions } from "../../types/project-options";
 import { writeConfig } from "../../config/write-config";
 import { copyTemplate } from "../../template-engine/copy-template";
 import { resolveTemplatePath } from "../../template-engine/resolve-template-path";
-import { BackendKitError } from "../../utils/errors";
+import { StartXKitError } from "../../utils/errors";
 import { toKebabCase, toPluralName } from "../../utils/case";
 import { moduleVariables } from "../express/express-project.generator";
 import { fallbackDependencyVersion, resolveDependencyVersions } from "../../package-manager/dependency-versions";
@@ -16,7 +16,7 @@ export async function createProjectFromTemplates(
   options: ProjectOptions,
 ): Promise<void> {
   if (options.language !== "typescript") {
-    throw new BackendKitError("JavaScript templates are not supported in the MVP.");
+    throw new StartXKitError("JavaScript templates are not supported in the MVP.");
   }
 
   let templateDir = resolveTemplatePath(framework, "typescript", options.architecture, "base");
@@ -69,7 +69,7 @@ export async function createProjectFromTemplates(
     path.join(options.targetDir, "package.json"),
     {
       name: toKebabCase(options.projectName),
-      version: "0.1.0",
+      version: "0.1.3",
       private: true,
       type: "module",
       scripts: {
@@ -86,8 +86,8 @@ export async function createProjectFromTemplates(
   );
 
   await writeConfig(options.targetDir, {
-    tool: "backendkit",
-    version: "0.1.0",
+    tool: "startxkit",
+    version: "0.1.3",
     framework,
     language: options.language,
     architecture: options.architecture,
@@ -106,14 +106,14 @@ export async function createProjectFromTemplates(
 }
 
 export async function addModuleFromTemplates(
-  config: BackendKitConfig,
+  config: StartXKitConfig,
   options: ModuleOptions,
 ): Promise<string[]> {
   const projectRoot = options.cwd ?? process.cwd();
   const targetDir = path.join(projectRoot, config.moduleDir, toPluralName(options.name));
 
   if ((await fs.pathExists(targetDir)) && !options.overwrite) {
-    throw new BackendKitError(`Module "${options.name}" already exists.`);
+    throw new StartXKitError(`Module "${options.name}" already exists.`);
   }
 
   let templateDir = resolveTemplatePath(config.framework, "typescript", config.architecture, "module");
@@ -144,7 +144,7 @@ export async function addModuleFromTemplates(
 
 async function registerSimpleFrameworkRoute(
   projectRoot: string,
-  config: BackendKitConfig,
+  config: StartXKitConfig,
   kebabName: string,
 ): Promise<void> {
   const serverPath = path.join(projectRoot, config.srcDir, "server.ts");

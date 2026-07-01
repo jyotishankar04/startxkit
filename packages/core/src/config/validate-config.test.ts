@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { validateConfig } from "./validate-config";
 
 const validConfig = {
-  tool: "backendkit",
-  version: "0.1.0",
+  tool: "startxkit",
+  version: "0.1.3",
   framework: "express",
   language: "typescript",
   architecture: "layered",

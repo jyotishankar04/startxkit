@@ -6,12 +6,12 @@ import { infoCommand } from "./commands/info.command";
 
 const program = new Command();
 
-program.name("backendkit").description("BackendKit project CLI").version("0.1.0");
+program.name("startxkit").description("StartXKit project CLI").version("0.1.3");
 
 const add = program.command("add").description("Add generated resources");
 add.command("module <name>").description("Add a backend module").action(addModuleCommand);
 
-program.command("doctor").description("Check BackendKit project health").action(doctorCommand);
-program.command("info").description("Print BackendKit project info").action(infoCommand);
+program.command("doctor").description("Check StartXKit project health").action(doctorCommand);
+program.command("info").description("Print StartXKit project info").action(infoCommand);
 
 await program.parseAsync(process.argv);

@@ -5,8 +5,8 @@ export type PackageManager = "npm" | "pnpm" | "yarn" | "bun";
 export type ValidationLibrary = "zod" | "Joi" | "none";
 export type LoggerOption = "console" | "pino" | "none";
 
-export interface BackendKitConfig {
-  tool: "backendkit";
+export interface StartXKitConfig {
+  tool: "startxkit";
   version: string;
   framework: Framework;
   language: Language;

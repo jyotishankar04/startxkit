@@ -1,12 +1,12 @@
 import pc from "picocolors";
-import { isBackendKitError, readConfig } from "@backendkit/core";
+import { isStartXKitError, readConfig } from "@startxkit/core";
 
 export async function infoCommand(): Promise<void> {
   try {
     const config = await readConfig();
     console.log(
       [
-        `${pc.bold("BackendKit")} ${config.version}`,
+        `${pc.bold("StartXKit")} ${config.version}`,
         `Framework: ${config.framework}`,
         `Language: ${config.language}`,
         `Architecture: ${config.architecture}`,
@@ -19,7 +19,7 @@ export async function infoCommand(): Promise<void> {
       ].join("\n"),
     );
   } catch (error) {
-    console.error(pc.red(isBackendKitError(error) ? error.message : "Info failed."));
+    console.error(pc.red(isStartXKitError(error) ? error.message : "Info failed."));
     process.exit(1);
   }
 }

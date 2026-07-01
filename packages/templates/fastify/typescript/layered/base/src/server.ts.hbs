@@ -3,7 +3,7 @@
 import { healthRoutes } from "./modules/health/health.route";
 
 const app = Fastify({ logger: {{#if hasLogger}}true{{else}}false{{/if}} });
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env.PORT ?? 4000);
 
 app.register(healthRoutes, { prefix: "{{apiPrefix}}/health" });
 

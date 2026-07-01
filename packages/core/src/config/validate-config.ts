@@ -1,5 +1,5 @@
-import type { BackendKitConfig } from "../types/config";
-import { BackendKitError } from "../utils/errors";
+import type { StartXKitConfig } from "../types/config";
+import { StartXKitError } from "../utils/errors";
 
 const frameworks = ["express", "fastify", "hono"];
 const languages = ["typescript", "javascript"];
@@ -7,36 +7,36 @@ const architectures = ["minimal", "modular", "layered"];
 const packageManagers = ["npm", "pnpm", "yarn", "bun"];
 const validationLibraries = ["zod", "Joi", "none"];
 
-export function validateConfig(value: unknown): BackendKitConfig {
-  const config = value as Partial<BackendKitConfig>;
+export function validateConfig(value: unknown): StartXKitConfig {
+  const config = value as Partial<StartXKitConfig>;
 
   if (!config || typeof config !== "object") {
-    throw new BackendKitError("Invalid backendkit.config.json.");
+    throw new StartXKitError("Invalid startxkit.config.json.");
   }
 
-  if (config.tool !== "backendkit") {
-    throw new BackendKitError("This directory is not a BackendKit project.");
+  if (config.tool !== "startxkit") {
+    throw new StartXKitError("This directory is not a StartXKit project.");
   }
 
   if (!frameworks.includes(config.framework ?? "")) {
-    throw new BackendKitError(`Unsupported framework: ${config.framework ?? "unknown"}.`);
+    throw new StartXKitError(`Unsupported framework: ${config.framework ?? "unknown"}.`);
   }
 
   if (!languages.includes(config.language ?? "")) {
-    throw new BackendKitError(`Unsupported language: ${config.language ?? "unknown"}.`);
+    throw new StartXKitError(`Unsupported language: ${config.language ?? "unknown"}.`);
   }
 
   if (!architectures.includes(config.architecture ?? "")) {
-    throw new BackendKitError(`Unsupported architecture: ${config.architecture ?? "unknown"}.`);
+    throw new StartXKitError(`Unsupported architecture: ${config.architecture ?? "unknown"}.`);
   }
 
   if (!packageManagers.includes(config.packageManager ?? "")) {
-    throw new BackendKitError(`Unsupported package manager: ${config.packageManager ?? "unknown"}.`);
+    throw new StartXKitError(`Unsupported package manager: ${config.packageManager ?? "unknown"}.`);
   }
 
   if (!validationLibraries.includes(config.validation ?? "")) {
-    throw new BackendKitError(`Unsupported validation library: ${config.validation ?? "unknown"}.`);
+    throw new StartXKitError(`Unsupported validation library: ${config.validation ?? "unknown"}.`);
   }
 
-  return config as BackendKitConfig;
+  return config as StartXKitConfig;
 }

@@ -11,7 +11,7 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@backendkit/core": ["packages/core/src/index.ts"]
+      "@startxkit/core": ["packages/core/src/index.ts"]
     },
     "declaration": true,
     "declarationMap": true,

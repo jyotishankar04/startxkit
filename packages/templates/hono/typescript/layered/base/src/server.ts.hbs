@@ -6,7 +6,7 @@ import { healthRoutes } from "./modules/health/health.route";
 {{/if}}
 
 const app = new Hono();
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env.PORT ?? 4000);
 {{#if isPino}}const logger = pino();
 {{/if}}
 

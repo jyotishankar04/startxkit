@@ -1,6 +1,6 @@
 {
-  "name": "@backendkit/core",
-  "version": "0.1.0",
+  "name": "@startxkit/core",
+  "version": "0.1.3",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,6 +9,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "dist"

@@ -1,6 +1,6 @@
-# BackendKit
+# StartXKit
 
-This project was generated with BackendKit.
+This project was generated with StartXKit.
 
 ## Development
 
@@ -8,17 +8,11 @@ This project was generated with BackendKit.
 pnpm dev
 ```
 
-## Add a module
-
-```bash
-npx backendkit add module users
-```
-
 ## Current setup
 
-- Framework: Fastify
+- Framework: Hono
 - Language: TypeScript
-- Architecture: modular
+- Architecture: minimal
 - Dependency Injection: Disabled
 - Auth: Disabled
 - Database: Disabled

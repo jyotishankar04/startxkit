@@ -1,35 +1,35 @@
-# BackendKit
+# StartXKit
 
-BackendKit is a TypeScript CLI toolkit for generating backend boilerplates for Express, Fastify, and Hono.
+StartXKit is a TypeScript CLI toolkit for generating backend boilerplates for Express, Fastify, and Hono.
 
 ## MVP Scope
 
-BackendKit creates simple runnable backend projects and adds modules with routes, controllers, services, repositories, simple request/response handlers, project config, and generated documentation.
+StartXKit creates simple runnable backend projects and adds modules with routes, controllers, services, repositories, simple request/response handlers, project config, and generated documentation.
 
 ## Usage
 
 Create a project:
 
 ```bash
-npm create backendkit@latest
+npm create @startxkit@latest
 ```
 
 Add a module inside a generated project:
 
 ```bash
-npx backendkit add module users
+npx @startxkit/cli add module users
 ```
 
 Check a project:
 
 ```bash
-npx backendkit doctor
+npx @startxkit/cli doctor
 ```
 
 Print project info:
 
 ```bash
-npx backendkit info
+npx @startxkit/cli info
 ```
 
 ## Supported

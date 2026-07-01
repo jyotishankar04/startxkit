@@ -2,7 +2,7 @@ import fs from "fs-extra";
 import path from "node:path";
 import pc from "picocolors";
 import { cancel, confirm, isCancel, outro, select } from "@clack/prompts";
-import { addModule, isBackendKitError, readConfig, toPluralName, type ModuleLayer } from "@backendkit/core";
+import { addModule, isStartXKitError, readConfig, toPluralName, type ModuleLayer } from "@startxkit/core";
 
 function abortIfCancel<T>(value: T | symbol): T {
   if (isCancel(value)) {
@@ -62,7 +62,7 @@ export async function addModuleCommand(name: string): Promise<void> {
 
     outro(["Generated files:", ...written.map((file) => `- ${pc.green(path.relative(process.cwd(), file))}`)].join("\n"));
   } catch (error) {
-    cancel(isBackendKitError(error) ? error.message : "Failed to add module.");
+    cancel(isStartXKitError(error) ? error.message : "Failed to add module.");
     process.exit(1);
   }
 }

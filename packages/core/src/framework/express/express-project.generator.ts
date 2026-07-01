@@ -1,13 +1,13 @@
 import fs from "fs-extra";
 import path from "node:path";
-import type { BackendKitConfig } from "../../types/config";
+import type { StartXKitConfig } from "../../types/config";
 import type { FrameworkGenerator } from "../../types/framework-generator";
 import type { ModuleOptions } from "../../types/module-options";
 import type { ProjectOptions } from "../../types/project-options";
 import { writeConfig } from "../../config/write-config";
 import { copyTemplate } from "../../template-engine/copy-template";
 import { resolveTemplatePath } from "../../template-engine/resolve-template-path";
-import { BackendKitError } from "../../utils/errors";
+import { StartXKitError } from "../../utils/errors";
 import { toCamelCase, toKebabCase, toPascalCase, toPluralName, toSingularName } from "../../utils/case";
 import { addExpressModule } from "./express-module.generator";
 import { fallbackDependencyVersion, resolveDependencyVersions } from "../../package-manager/dependency-versions";
@@ -64,7 +64,7 @@ async function writePackageJson(options: ProjectOptions): Promise<void> {
     path.join(options.targetDir, "package.json"),
     {
       name: toKebabCase(options.projectName),
-      version: "0.1.0",
+      version: "0.1.3",
       private: true,
       type: "module",
       scripts,
@@ -77,7 +77,7 @@ async function writePackageJson(options: ProjectOptions): Promise<void> {
 
 async function createExpressProject(options: ProjectOptions): Promise<void> {
   if (options.language !== "typescript") {
-    throw new BackendKitError("JavaScript templates are not supported in the MVP.");
+    throw new StartXKitError("JavaScript templates are not supported in the MVP.");
   }
 
   let templateDir = resolveTemplatePath(
@@ -102,8 +102,8 @@ async function createExpressProject(options: ProjectOptions): Promise<void> {
   }
   await writePackageJson(options);
   await writeConfig(options.targetDir, {
-    tool: "backendkit",
-    version: "0.1.0",
+    tool: "startxkit",
+    version: "0.1.3",
     framework: "express",
     language: options.language,
     architecture: options.architecture,
@@ -126,7 +126,7 @@ export const expressGenerator: FrameworkGenerator = {
   addModule: addExpressModule,
 };
 
-export function moduleVariables(config: BackendKitConfig, options: ModuleOptions) {
+export function moduleVariables(config: StartXKitConfig, options: ModuleOptions) {
   const kebabName = toPluralName(options.name);
   return {
     ...options,
@@ -152,7 +152,7 @@ export function moduleVariables(config: BackendKitConfig, options: ModuleOptions
   };
 }
 
-export async function resolveExpressModuleTemplate(config: BackendKitConfig): Promise<string> {
+export async function resolveExpressModuleTemplate(config: StartXKitConfig): Promise<string> {
   const templateDir = resolveTemplatePath("express", "typescript", config.architecture, "module");
   if (await hasTemplateFiles(templateDir)) return templateDir;
   return resolveTemplatePath("express", "typescript", "layered", "module");

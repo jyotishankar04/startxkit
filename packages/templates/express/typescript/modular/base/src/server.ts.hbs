@@ -5,7 +5,7 @@
 {{/if}}
 
 const app = createApp();
-const port = {{#if hasEnv}}env.PORT{{else}}Number(process.env.PORT ?? 3000){{/if}};
+const port = {{#if hasEnv}}env.PORT{{else}}Number(process.env.PORT ?? 4000){{/if}};
 {{#if isPino}}const logger = pino();
 {{/if}}
 

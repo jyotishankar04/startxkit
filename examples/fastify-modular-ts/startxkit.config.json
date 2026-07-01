@@ -1,9 +1,9 @@
 {
-  "tool": "backendkit",
+  "tool": "startxkit",
   "version": "0.1.0",
-  "framework": "express",
+  "framework": "fastify",
   "language": "typescript",
-  "architecture": "layered",
+  "architecture": "modular",
   "packageManager": "pnpm",
   "srcDir": "src",
   "moduleDir": "src/modules",
@@ -14,5 +14,5 @@
   "auth": false,
   "fileNaming": "kebab-case",
   "logger": "console",
-  "dependencyInjection": true
+  "dependencyInjection": false
 }

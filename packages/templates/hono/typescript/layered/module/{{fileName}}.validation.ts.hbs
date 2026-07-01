@@ -1,4 +1,4 @@
 import { z } from "zod";
 
-export const create{{singularPascalName}}Schema = z.record(z.unknown());
+export const create{{singularPascalName}}Schema = z.object({}).passthrough();
 export const update{{singularPascalName}}Schema = create{{singularPascalName}}Schema.partial();

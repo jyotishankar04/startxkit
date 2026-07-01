@@ -6,7 +6,7 @@ import {
   createProject,
   detectPackageManager,
   installDependencies as installProjectDependencies,
-  isBackendKitError,
+  isStartXKitError,
   type Architecture,
   type Framework,
   type Language,
@@ -14,7 +14,7 @@ import {
   type PackageManager,
   type ProjectOptions,
   type ValidationLibrary,
-} from "@backendkit/core";
+} from "@startxkit/core";
 
 function abortIfCancel<T>(value: T | symbol): T {
   if (isCancel(value)) {
@@ -26,7 +26,7 @@ function abortIfCancel<T>(value: T | symbol): T {
 
 const titleCase = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-const backendKitBanner = String.raw`
+const startXKitBanner = String.raw`
 ██████╗  █████╗  ██████╗██╗  ██╗███████╗███╗   ██╗██████╗ ██╗  ██╗██╗████████╗
 ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝████╗  ██║██╔══██╗██║ ██╔╝██║╚══██╔══╝
 ██████╔╝███████║██║     █████╔╝ █████╗  ██╔██╗ ██║██║  ██║█████╔╝ ██║   ██║
@@ -37,7 +37,7 @@ const backendKitBanner = String.raw`
 
 export async function runCreate(): Promise<void> {
   intro(
-    `${pc.red(backendKitBanner)}\n${pc.bold("Welcome to BackendKit")}\nCreate scalable backend boilerplates for Express, Fastify, and Hono.`,
+    `${pc.red(startXKitBanner)}\n${pc.bold("Welcome to StartXKit")}\nCreate scalable backend boilerplates for Express, Fastify, and Hono.`,
   );
 
   try {
@@ -252,7 +252,7 @@ export async function runCreate(): Promise<void> {
         .join("\n"),
     );
   } catch (error) {
-    cancel(isBackendKitError(error) ? error.message : "Project creation failed.");
+    cancel(isStartXKitError(error) ? error.message : "Project creation failed.");
     process.exit(1);
   }
 }

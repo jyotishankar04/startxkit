@@ -1,6 +1,6 @@
-# BackendKit
+# StartXKit
 
-This project was generated with BackendKit.
+This project was generated with StartXKit.
 
 ## Development
 
@@ -11,13 +11,13 @@ pnpm dev
 ## Add a module
 
 ```bash
-npx backendkit add module users
+npx startxkit add module users
 ```
 
 ## Check project
 
 ```bash
-npx backendkit doctor
+npx startxkit doctor
 ```
 
 ## Current setup

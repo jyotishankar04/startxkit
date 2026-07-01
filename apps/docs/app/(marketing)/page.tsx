@@ -15,22 +15,22 @@ import {
 
 const COMMANDS = [
   {
-    command: "npm create startxkit@latest",
+    command: "npm create @startxkit@latest",
     title: "Create a backend",
     desc: "Launches the interactive scaffold flow for a new TypeScript API.",
   },
   {
-    command: "npx startxkit add module users",
+    command: "npx @startxkit/cli add module users",
     title: "Add a module",
     desc: "Generates route, controller, service, repository, interface, and validation files based on the selected layer.",
   },
   {
-    command: "npx startxkit doctor",
+    command: "npx @startxkit/cli doctor",
     title: "Check the project",
     desc: "Validates StartXKit config, framework, architecture, package manager, and module directory.",
   },
   {
-    command: "npx startxkit info",
+    command: "npx @startxkit/cli info",
     title: "Print project info",
     desc: "Shows framework, language, architecture, module directory, API prefix, and validation choices.",
   },
@@ -139,7 +139,7 @@ function CliPreview() {
 
         <div className="grid gap-6 p-5 sm:grid-cols-[1fr_0.9fr] sm:p-6">
           <div className="font-mono text-sm leading-7">
-            <p className="text-emerald-300">$ npm create startxkit@latest</p>
+            <p className="text-emerald-300">$ npm create @startxkit@latest</p>
             <p className="text-zinc-500">Welcome to StartXKit</p>
             <p className="text-zinc-200">Project name: my-api</p>
             <p className="text-zinc-200">Framework: Fastify</p>
@@ -147,7 +147,7 @@ function CliPreview() {
             <p className="text-zinc-200">API prefix: /api/v1</p>
             <p className="text-zinc-200">Validation: Zod</p>
             <p className="text-zinc-200">Logger: Pino</p>
-            <p className="text-indigo-300">$ npx startxkit add module users</p>
+            <p className="text-indigo-300">$ npx @startxkit/cli add module users</p>
             <p className="text-amber-200">Generated files: 6</p>
           </div>
 
@@ -281,7 +281,7 @@ export default function LandingPage() {
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <Terminal className="size-4 text-primary" />
                 <code className="font-mono text-foreground">
-                  npm create startxkit@latest
+                  npm create @startxkit@latest
                 </code>
               </div>
             </div>
