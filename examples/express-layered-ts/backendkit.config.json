@@ -1,0 +1,18 @@
+{
+  "tool": "backendkit",
+  "version": "0.1.0",
+  "framework": "express",
+  "language": "typescript",
+  "architecture": "layered",
+  "packageManager": "pnpm",
+  "srcDir": "src",
+  "moduleDir": "src/modules",
+  "apiPrefix": "/api/v1",
+  "validation": "zod",
+  "database": null,
+  "orm": null,
+  "auth": false,
+  "fileNaming": "kebab-case",
+  "logger": "console",
+  "dependencyInjection": true
+}
