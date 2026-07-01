@@ -1,0 +1,18 @@
+{
+  "tool": "backendkit",
+  "version": "0.1.0",
+  "framework": "hono",
+  "language": "typescript",
+  "architecture": "minimal",
+  "packageManager": "pnpm",
+  "srcDir": "src",
+  "moduleDir": "src/modules",
+  "apiPrefix": "/api/v1",
+  "validation": "none",
+  "database": null,
+  "orm": null,
+  "auth": false,
+  "fileNaming": "kebab-case",
+  "logger": "none",
+  "dependencyInjection": false
+}
