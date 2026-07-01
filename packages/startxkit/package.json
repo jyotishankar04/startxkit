@@ -1,6 +1,6 @@
 {
   "name": "@startxkit/cli",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "type": "module",
   "bin": {
     "startxkit": "dist/cli.js"
@@ -9,7 +9,9 @@
     "access": "public"
   },
   "main": "dist/cli.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",

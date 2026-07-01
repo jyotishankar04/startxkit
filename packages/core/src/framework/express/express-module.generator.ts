@@ -72,20 +72,22 @@ export async function addExpressModule(
     targetDir,
     moduleVariables(config, options),
   );
+  const removed: string[] = [];
   if (options.layer === "route-controller") {
-    await fs.remove(path.join(targetDir, `${kebabName}.service.ts`));
-    await fs.remove(path.join(targetDir, `${kebabName}.repository.ts`));
+    removed.push(`${kebabName}.service.ts`, `${kebabName}.repository.ts`);
   }
   if (options.layer === "route-controller-service") {
-    await fs.remove(path.join(targetDir, `${kebabName}.repository.ts`));
+    removed.push(`${kebabName}.repository.ts`);
   }
   if (options.layer !== "full") {
-    await fs.remove(path.join(targetDir, `${kebabName}.interface.ts`));
-    await fs.remove(path.join(targetDir, `${kebabName}.validation.ts`));
+    removed.push(`${kebabName}.interface.ts`, `${kebabName}.validation.ts`);
   }
-  if (!options.validation) await fs.remove(path.join(targetDir, `${kebabName}.validation.ts`));
+  if (!options.validation) removed.push(`${kebabName}.validation.ts`);
+  for (const file of removed) await fs.remove(path.join(targetDir, file));
   await ensureRoutesIndex(projectRoot, config);
   await registerModuleRoute(projectRoot, config, options.name);
 
-  return written;
+  return written.filter(
+    (file) => !removed.some((r) => file.endsWith(path.sep + r)),
+  );
 }
