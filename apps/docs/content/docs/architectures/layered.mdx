@@ -1,59 +1,104 @@
 ---
 title: Layered Architecture
-description: Full MVC-inspired stack with controllers, services, and repositories for production APIs.
+description: A responsibility-first layout for larger APIs with clear boundaries between routes, controllers, services, and repositories.
 ---
 
-The layered architecture implements a full MVC-inspired stack with controllers, services, and repositories. It is the most structured option, designed for production APIs with complex business logic.
+Layered architecture organizes code by responsibility.
 
-## When to Use
+Instead of placing all `users` files in one folder, each type of file has a top-level folder. Routes go in `src/routes`, controllers go in `src/controllers`, services go in `src/services`, and repositories go in `src/repositories`.
 
-- Large APIs with complex business rules
-- Teams of 5+ developers
-- Projects that need a dedicated data access layer
-- When maintainability and testability are top priorities
+## When To Use Layered
 
-## Structure Example (Full)
+Use layered when:
+
+- The API has many features
+- The team wants strict boundaries between responsibilities
+- Business logic should be easy to test outside HTTP
+- Data access should be isolated behind repositories
+- You want a structure that scales as the project grows
+
+## Structure
 
 ```text
 src/
-  app.ts
   server.ts
-  config/
-  shared/
-    errors/
-    middlewares/
-    utils/
-    interfaces/
-  modules/
-    health/
-      health.route.ts
-      health.controller.ts
-    users/
-      users.route.ts
-      users.controller.ts
-      users.service.ts
-      users.repository.ts
-      users.interface.ts
-      users.dto.ts
   routes/
-    index.ts
+    health.route.ts
+    users.route.ts
+  controllers/
+    health.controller.ts
+    users.controller.ts
+  services/
+    health.service.ts
+    users.service.ts
+  repositories/
+    health.repository.ts
+    users.repository.ts
+  interfaces/
+    health.interface.ts
+    users.interface.ts
+  validators/
+    health.validation.ts
+    users.validation.ts
+  shared/
+  config/
 ```
 
-## Module Layer Options
-
-When you run `npx @startxkit/cli add module`, you can choose how deep to go:
-
-- **route-controller** — minimal, just routes and controllers
-- **+service** — adds a service for business logic
-- **+repository** — adds a repository for data access
-- **full** — service, repository, interfaces, and DTOs
-
-## Responsibility Flow
+## Request Flow
 
 ```text
-Request → Route → Controller → Service → Repository
-                                        ↓
-                                    Response
+Request
+  |
+  v
+route
+  |
+  v
+controller
+  |
+  v
+service
+  |
+  v
+repository
+  |
+  v
+Response
 ```
 
-Each layer has a single responsibility. Controllers handle HTTP concerns, services contain business logic, and repositories manage data access — making every layer independently testable.
+## Layer Responsibilities
+
+| Layer | Responsibility | Should avoid |
+| --- | --- | --- |
+| Route | HTTP path registration | Business rules |
+| Controller | Request and response handling | Data persistence details |
+| Service | Business rules and orchestration | Framework-specific request objects |
+| Repository | Data access boundary | HTTP response formatting |
+| Interface | TypeScript contracts | Runtime logic |
+| Validator | Validation schemas or helpers | Business orchestration |
+
+## Add-Module Depth
+
+Layered projects still let you choose how much of the stack to generate:
+
+| Choice | Files |
+| --- | --- |
+| Route + Controller | `routes`, `controllers` |
+| Route + Controller + Service | `routes`, `controllers`, `services` |
+| Route + Controller + Service + Repository | `routes`, `controllers`, `services`, `repositories` |
+| Full | All layers, including `interfaces` and `validators` |
+
+## Why Use Layered
+
+Layered projects make dependencies visible:
+
+```text
+controller depends on service
+service depends on repository
+repository does not depend on controller
+```
+
+That direction matters. It keeps business logic away from framework-specific HTTP details and makes service tests easier to write later.
+
+## Trade-Off
+
+Layered creates more files. For a tiny API, that can feel heavy. For a growing production API, the extra structure usually pays for itself through clearer ownership and easier testing.

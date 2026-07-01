@@ -1,40 +1,42 @@
 ---
 title: add module
-description: Generate a new feature module with routes, controllers, services, and repositories.
+description: Generate a feature module and choose how many layers it should contain.
 ---
 
-The `add module` command generates a new feature module in your StartXKit project with routes, controllers, services, and repositories — depending on the layer depth you choose.
+The `add module` command adds a new feature to an existing StartXKit project.
+
+Use it for things like:
+
+- `users`
+- `auth`
+- `products`
+- `orders`
+- `billing`
 
 ## Usage
+
+Run the command from the root of a generated StartXKit project:
 
 ```sh
 npx @startxkit/cli add module users
 ```
 
-## Module Layer Options
+The CLI reads `startxkit.config.json`, then uses your framework and architecture to place the files correctly.
 
-When you run the command, you're prompted to choose a layer option:
+## Layer Choices
 
-- **route-controller** — route file + controller file
-- **+service** — route, controller, and service (business logic layer)
-- **+repository** — route, controller, service, and repository (data access layer)
-- **full** — route, controller, service, repository, interfaces, and DTOs
+When prompted, choose how deep the module should be:
 
-## Generated CRUD Endpoints
+| Prompt label | Generated files | Use when |
+| --- | --- | --- |
+| Route + Controller | route, controller | The feature only needs HTTP handlers |
+| Route + Controller + Service | route, controller, service | The feature has business logic |
+| Route + Controller + Service + Repository | route, controller, service, repository | The feature needs a data access boundary |
+| Full | route, controller, service, repository, interface, validator | The feature should have the full production structure |
 
-Each module comes with standard REST endpoints out of the box:
+## Modular Output
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/users` | List all users |
-| POST | `/users` | Create a new user |
-| GET | `/users/:id` | Get user by ID |
-| PATCH | `/users/:id` | Update user by ID |
-| DELETE | `/users/:id` | Delete user by ID |
-
-## Generated File Tree
-
-After running the command with the `full` layer option, your project looks like:
+In a modular project, each feature owns its files:
 
 ```text
 src/
@@ -45,11 +47,85 @@ src/
       users.service.ts
       users.repository.ts
       users.interface.ts
-      users.dto.ts
+      users.validation.ts
 ```
 
-For lighter options, only the selected files are generated (e.g. `route-controller` generates only `.route.ts` and `.controller.ts`).
+This is a feature-first layout. Everything for `users` is in one folder.
 
-## Automatic Route Registration
+## Layered Output
 
-The module's route file is automatically registered in the central `routes/index.ts` file. No manual wiring required — your endpoints are immediately available after generation.
+In a layered project, files are grouped by responsibility:
+
+```text
+src/
+  routes/
+    users.route.ts
+  controllers/
+    users.controller.ts
+  services/
+    users.service.ts
+  repositories/
+    users.repository.ts
+  interfaces/
+    users.interface.ts
+  validators/
+    users.validation.ts
+```
+
+This is a layer-first layout. All routes live together, all controllers live together, and so on.
+
+## Minimal Output
+
+In a minimal project, the route file contains the handlers directly:
+
+```text
+src/
+  routes/
+    users.route.ts
+```
+
+Minimal projects intentionally avoid controllers, services, repositories, interfaces, and validators.
+
+## Generated Endpoints
+
+If you choose CRUD endpoints, the module includes:
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/users` | List records |
+| `GET` | `/users/:id` | Read one record |
+| `POST` | `/users` | Create a record |
+| `PATCH` | `/users/:id` | Update a record |
+| `DELETE` | `/users/:id` | Delete a record |
+
+The final URL also includes your API prefix. With `/api/v1`, the list endpoint becomes:
+
+```text
+GET /api/v1/users
+```
+
+## Dependency Injection
+
+If dependency injection is enabled, the route file wires the selected layers together:
+
+```text
+route
+  |
+  v
+controller
+  |
+  v
+service
+  |
+  v
+repository
+```
+
+If a layer was not selected, the generated code does not try to inject it. For example, `Route + Controller` does not create or inject a service.
+
+## Common Choices
+
+- Choose `Route + Controller` for thin endpoints.
+- Choose `Route + Controller + Service` for most business features.
+- Choose `Route + Controller + Service + Repository` when the feature talks to persistence.
+- Choose `Full` when you want interfaces and validation files from the start.

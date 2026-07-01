@@ -1,51 +1,81 @@
 ---
 title: Fastify
-description: Generate high-performance Fastify projects with plugin architecture and schema validation.
+description: Generate Fastify APIs with plugin-style route registration and strong performance defaults.
 ---
 
-Fastify is a high-performance Node.js framework with a plugin-based architecture. StartXKit generates a Fastify project that leverages plugins for clean separation of concerns.
+Fastify is a high-performance Node.js framework with a plugin-oriented design. It is a good choice when you want fast request handling and a structured way to register route groups.
 
-## Quick Start
+## Choose Fastify When
 
-```sh
-npm create @startxkit@latest
+- Performance matters
+- You like plugin-style route registration
+- You want built-in structured logging support
+- You want a framework that ships its own TypeScript types
+
+## Generated Entry Point
+
+Fastify projects generate a `src/server.ts` file that creates the app, registers optional features, mounts routes, and starts the server.
+
+```text
+src/
+  server.ts
+  routes/ or modules/
+  config/
+  shared/
 ```
 
-Select **Fastify** when prompted for framework.
-
-## Plugin Pattern
-
-Each module is registered as a Fastify plugin, scoped with a prefix:
+## Route Example
 
 ```ts
-import { FastifyPluginAsync } from "fastify";
+import type { FastifyInstance } from "fastify";
 import { UsersController } from "./users.controller";
 
-const usersPlugin: FastifyPluginAsync = async (fastify) => {
-  const controller = new UsersController();
-
-  fastify.get("/", controller.getAll);
-  fastify.post("/", controller.create);
-  fastify.get("/:id", controller.getById);
-  fastify.patch("/:id", controller.update);
-  fastify.delete("/:id", controller.delete);
-};
-
-export default usersPlugin;
+export async function usersRoutes(app: FastifyInstance) {
+  app.get("/", UsersController.getAll);
+  app.post("/", UsersController.create);
+  app.get("/:id", UsersController.getById);
+  app.patch("/:id", UsersController.update);
+  app.delete("/:id", UsersController.remove);
+}
 ```
 
-## App Registration
+The server registers the route group with a prefix:
 
 ```ts
-import usersPlugin from "./modules/users";
-
-app.register(usersPlugin, { prefix: "/users" });
+app.register(usersRoutes, { prefix: "/api/v1/users" });
 ```
 
-## Dependencies
+## Request Flow
 
-- `fastify` — High-performance HTTP framework
-- `dotenv` — Environment variable loading
-- `zod` — Request/response validation
-- `pino` — Structured logging (built into Fastify)
-- `vitest` — Unit and integration testing
+```text
+request
+  |
+  v
+Fastify app
+  |
+  v
+registered route plugin
+  |
+  v
+controller
+  |
+  v
+optional service/repository
+```
+
+## Optional Features
+
+| Feature | What it adds |
+| --- | --- |
+| CORS | `@fastify/cors` and `src/config/cors.ts` |
+| Env config | `dotenv` and `src/config/env.ts` |
+| Error handler | `app.setErrorHandler(...)` and shared error files |
+| Logger | Fastify logger enabled when requested |
+| Zod validation | `zod` dependency and validator-ready module files |
+| Vitest | `test` script and `vitest` dependency |
+
+## Architecture Notes
+
+- Minimal Fastify projects use route files with inline handlers.
+- Modular Fastify projects use `src/modules/{feature}`.
+- Layered Fastify projects use top-level route, controller, service, repository, interface, and validator folders.

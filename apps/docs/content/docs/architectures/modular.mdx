@@ -1,28 +1,29 @@
 ---
 title: Modular Architecture
-description: Feature-based modules with route and controller files for clear separation of concerns.
+description: A feature-first layout where each module keeps its related files together.
 ---
 
-The modular architecture organizes code into feature-based modules, each with its own route and controller files. Shared utilities and middlewares live outside modules.
+Modular architecture organizes code by feature.
 
-## When to Use
+Each feature gets its own folder under `src/modules`. That folder can contain a route, controller, service, repository, interface, and validator depending on the layer depth you choose.
 
-- Medium-sized APIs with multiple feature areas
-- Teams of 2–5 developers
-- Projects that benefit from clear module boundaries
-- When you want separation of route definitions and handler logic
+## When To Use Modular
 
-## Structure Example
+Use modular when:
+
+- Your API has several features
+- You want each feature to be easy to find
+- You prefer `users` files to live together
+- You want more structure than minimal, but less ceremony than layered
+- Your team works by feature area
+
+## Structure
 
 ```text
 src/
-  app.ts
   server.ts
-  config/
-  shared/
-    errors/
-    middlewares/
-    utils/
+  routes/
+    index.ts
   modules/
     health/
       health.route.ts
@@ -30,15 +31,60 @@ src/
     users/
       users.route.ts
       users.controller.ts
-  routes/
-    index.ts
+      users.service.ts
+      users.repository.ts
+      users.interface.ts
+      users.validation.ts
+  shared/
+  config/
 ```
 
-## Module Files
+## Request Flow
 
-Each module contains two files:
+```text
+Request
+  |
+  v
+routes/index.ts
+  |
+  v
+modules/users/users.route.ts
+  |
+  v
+modules/users/users.controller.ts
+  |
+  v
+optional service/repository
+  |
+  v
+Response
+```
 
-- **`.route.ts`** — defines the HTTP routes and wires controllers
-- **`.controller.ts`** — request handler methods, input validation, response formatting
+## File Responsibilities
 
-This pattern gives you clean separation without the overhead of a full layered architecture. Upgrade to layered when your business logic needs a dedicated service layer.
+| File | Responsibility |
+| --- | --- |
+| `users.route.ts` | Defines HTTP paths and attaches handlers |
+| `users.controller.ts` | Reads request data and returns responses |
+| `users.service.ts` | Contains business logic |
+| `users.repository.ts` | Contains data access code |
+| `users.interface.ts` | Defines shared TypeScript shapes |
+| `users.validation.ts` | Keeps validation schemas or validation helpers |
+
+## Why Use Modular
+
+Modular projects are easy to navigate:
+
+```text
+Need to work on users?
+  open src/modules/users
+
+Need to work on orders?
+  open src/modules/orders
+```
+
+The feature folder is the boundary. That makes modular a good default for many APIs.
+
+## Trade-Off
+
+Modular keeps related files together, but large projects can still become dense if every module grows many layers. If your team needs all controllers together, all services together, or all repositories together, use layered.

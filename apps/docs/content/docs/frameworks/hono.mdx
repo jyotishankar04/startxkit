@@ -1,51 +1,81 @@
 ---
 title: Hono
-description: Generate lightweight, edge-ready Hono projects with router-based patterns.
+description: Generate lightweight Hono APIs with composable route objects and a small runtime footprint.
 ---
 
-Hono is a lightweight, ultrafast web framework designed for edge runtimes and Bun/Deno. StartXKit generates a Hono project using its router-based pattern for clean, composable APIs.
+Hono is a small, fast web framework with a clean router model. StartXKit uses Hono with the Node.js adapter, so generated projects run like a normal Node backend.
 
-## Quick Start
+## Choose Hono When
 
-```sh
-npm create @startxkit@latest
+- You want a lightweight API framework
+- You prefer compact route definitions
+- You want a small dependency footprint
+- You may later explore edge-style runtimes
+
+## Generated Entry Point
+
+Hono projects generate `src/server.ts`. It creates a Hono app, registers optional middleware, mounts route objects, and starts the Node server.
+
+```text
+src/
+  server.ts
+  routes/ or modules/
+  config/
+  shared/
 ```
 
-Select **Hono** when prompted for framework.
-
-## Router Pattern
-
-Routes are defined using Hono's chained router methods:
+## Route Example
 
 ```ts
 import { Hono } from "hono";
 import { UsersController } from "./users.controller";
 
-const usersRouter = new Hono();
-const controller = new UsersController();
+export const usersRoutes = new Hono();
 
-usersRouter.get("/", ...controller.getAll);
-usersRouter.post("/", ...controller.create);
-usersRouter.get("/:id", ...controller.getById);
-usersRouter.patch("/:id", ...controller.update);
-usersRouter.delete("/:id", ...controller.delete);
-
-export default usersRouter;
+usersRoutes.get("/", UsersController.getAll);
+usersRoutes.post("/", UsersController.create);
+usersRoutes.get("/:id", UsersController.getById);
+usersRoutes.patch("/:id", UsersController.update);
+usersRoutes.delete("/:id", UsersController.remove);
 ```
 
-## Mounting Routes
+The server mounts the route object:
 
 ```ts
-import usersRouter from "./modules/users";
-
-app.route("/users", usersRouter);
+app.route("/api/v1/users", usersRoutes);
 ```
 
-## Dependencies
+## Request Flow
 
-- `hono` — Ultrafast web framework
-- `@hono/node-server` — Node.js adapter for Hono
-- `dotenv` — Environment variable loading
-- `zod` — Request/response validation
-- `pino` — Structured logging
-- `vitest` — Unit and integration testing
+```text
+request
+  |
+  v
+Hono app
+  |
+  v
+mounted route object
+  |
+  v
+controller
+  |
+  v
+optional service/repository
+```
+
+## Optional Features
+
+| Feature | What it adds |
+| --- | --- |
+| CORS | `hono/cors` middleware and `src/config/cors.ts` |
+| Env config | `dotenv` and `src/config/env.ts` |
+| Error handler | `app.onError(...)` and shared error files |
+| Pino logger | `pino` dependency |
+| Zod validation | `zod` dependency and validator-ready module files |
+| Vitest | `test` script and `vitest` dependency |
+
+## Architecture Notes
+
+- Minimal Hono projects use route files with inline handlers.
+- Modular Hono projects use `src/modules/{feature}`.
+- Layered Hono projects use top-level route, controller, service, repository, interface, and validator folders.

@@ -1,43 +1,64 @@
 ---
 title: Roadmap
-description: What's available today and what's coming next for StartXKit.
+description: What StartXKit supports today and what is planned next.
 ---
 
-StartXKit is under active development. Here's what's available today and what's coming next.
+StartXKit is focused on a TypeScript backend scaffolding MVP. The current goal is to make the generated projects predictable, easy to inspect, and useful as a starting point for real APIs.
 
-## MVP Features (Available Now)
+## Available Now
 
-- Interactive project scaffolding with `npm create @startxkit@latest`
-- 3 framework options: Express, Fastify, Hono
-- 3 architecture options: Minimal, Modular, Layered
+- Interactive project creation with `npm create @startxkit@latest`
+- Framework choices: Express, Fastify, Hono
+- Architecture choices: minimal, modular, layered
+- Generated health endpoint
+- API prefix configuration
 - Module generation with `npx @startxkit/cli add module`
-- Layer depth options: route-controller, +service, +repository, full
-- Built-in health check module
-- Configurable API prefix
-- Optional CORS, env config, Zod validation, Pino logging, error handler
-- Optional DI (dependency injection) setup
-- Dockerfile generation
-- Vitest test setup
-- TypeScript support
+- Module layer choices:
+  - Route + Controller
+  - Route + Controller + Service
+  - Route + Controller + Service + Repository
+  - Full
+- Optional CORS setup
+- Optional env config
+- Optional Zod validation dependency
+- Optional Pino logging
+- Optional error handler
+- Optional dependency injection wiring
+- Optional Vitest setup
+- Optional Docker files
 - Package manager selection: pnpm, npm, yarn, bun
-- CLI tools: `doctor`, `info`
+- Project commands: `doctor` and `info`
 
-## Coming Soon
+## Not In The MVP
 
-- **Authentication** — JWT, session, and OAuth scaffolding
-- **Database integration** — PostgreSQL, MySQL, SQLite, MongoDB
-- **ORM support** — Drizzle, Prisma
-- **NestJS framework** — modular, opinionated framework option
-- **JavaScript templates** — scaffold projects without TypeScript
-- **Migration generator** — `npx @startxkit/cli add migration`
-- **OpenAPI/Swagger** — auto-generated API docs from route definitions
+These are intentionally not part of the current MVP:
 
-## Not Supported in MVP
+- Authentication
+- Database setup
+- ORM setup
+- JavaScript templates
+- GraphQL
+- WebSockets
+- gRPC
+- Deployment templates
 
-- GraphQL endpoints
-- WebSocket support
-- gRPC services
-- Monorepo tooling (beyond basic module structure)
-- Serverless/deployment templates
+Keeping these out of the MVP makes the generated projects smaller and easier to understand.
+
+## Planned Areas
+
+| Area | Possible additions |
+| --- | --- |
+| Authentication | JWT, sessions, OAuth starter flows |
+| Databases | PostgreSQL, MySQL, SQLite, MongoDB |
+| ORMs | Drizzle, Prisma |
+| API docs | OpenAPI or Swagger generation |
+| More runtimes | Serverless and deployment templates |
+| More languages | JavaScript templates |
+
+## Design Principle
+
+StartXKit should generate code that developers can understand on day one.
+
+That means new features should not only add files. They should also preserve clear folder structure, readable generated code, and working TypeScript checks.
 
 Have a feature request? Open an issue on [GitHub](https://github.com/jyotishankar04/startxkit).

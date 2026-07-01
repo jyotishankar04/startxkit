@@ -1,45 +1,116 @@
 ---
 title: Getting Started
-description: Install and create your first StartXKit project in under a minute.
+description: Create your first StartXKit project and understand each prompt.
 ---
 
-## Installation
+This tutorial creates a working backend API and explains the choices you make during setup.
 
-Run the create command:
+## Prerequisites
+
+You need:
+
+- Node.js installed
+- One package manager: `pnpm`, `npm`, `yarn`, or `bun`
+- A terminal in the folder where you want to create the project
+
+## Create A Project
+
+Run:
 
 ```sh
 npm create @startxkit@latest
 ```
 
-This launches an interactive prompt that guides you through project setup.
+The create command opens an interactive prompt. You can accept the defaults for a quick first project.
 
-## Creation Flow
+## Recommended First Project
 
-The CLI will ask you these questions:
+For a first run, choose:
 
-1. **Project name** — defaults to `my-api`
-2. **Language** — TypeScript (JavaScript coming soon)
-3. **Framework** — Express, Fastify, or Hono
-4. **Architecture** — Minimal, Modular, or Layered
-5. **API prefix** — `/api/v1`, `/api`, none, or custom
-6. **Package manager** — pnpm, npm, yarn, or bun
-7. **Add CORS?** — yes/no
-8. **Add env config?** — yes/no
-9. **Add request validation?** — Zod or None
-10. **Add logger?** — Console, Pino, or None
-11. **Add error handler?** — yes/no
-12. **Add dependency injection?** — yes/no
-13. **Add testing setup?** — Vitest or None
-14. **Add Docker?** — yes/no
-15. **Install dependencies now?** — yes/no
+| Prompt | Recommended value | Why |
+| --- | --- | --- |
+| Framework | Express | Familiar and easy to inspect |
+| Architecture | Modular | Clear feature folders without too much structure |
+| API prefix | `/api/v1` | Keeps API routes grouped |
+| CORS | Yes | Useful for frontend development |
+| Env config | Yes | Centralizes `PORT` and environment values |
+| Validation | Zod | Gives generated modules a validation path |
+| Logger | Pino or Console | Makes server activity visible |
+| Error handler | Yes | Adds a predictable error response shape |
+| Dependency injection | Yes | Makes generated modules easier to test |
+| Testing | Vitest | Adds a test script |
+| Docker | Optional | Choose yes only if you need container files |
 
-A summary note is shown before generation — confirm to proceed.
+## Prompt Reference
 
-## After Creation
+The CLI currently asks for:
+
+1. Project name
+2. Language, currently TypeScript
+3. Framework: Express, Fastify, or Hono
+4. Architecture: Minimal, Modular, or Layered
+5. API prefix
+6. Package manager
+7. CORS
+8. Env config
+9. Request validation
+10. Logger
+11. Error handler
+12. Dependency injection
+13. Testing setup
+14. Docker
+15. Dependency installation
+
+## Run The Project
+
+Move into the generated folder:
 
 ```sh
 cd my-api
+```
+
+Install dependencies if you did not install them during generation:
+
+```sh
+pnpm install
+```
+
+Start the dev server:
+
+```sh
 pnpm dev
 ```
 
-Visit `http://localhost:4000/api/v1/health` to verify.
+Visit:
+
+```text
+http://localhost:4000/api/v1/health
+```
+
+You should see a JSON response with `success: true`.
+
+## Add Your First Module
+
+Inside the generated project, run:
+
+```sh
+npx @startxkit/cli add module users
+```
+
+Choose a layer depth. For a normal feature module, `Route + Controller + Service` is a good starting point.
+
+## Mental Model
+
+```text
+project
+  |
+  +-- framework decides how HTTP is handled
+  |
+  +-- architecture decides where files live
+  |
+  +-- feature flags decide which support files are generated
+  |
+  +-- add module grows the project after creation
+```
+
+If the project feels too small for controllers and services, choose minimal. If it needs strict separation for a larger team, choose layered.

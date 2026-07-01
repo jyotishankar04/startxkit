@@ -1,42 +1,74 @@
 ---
 title: Introduction
-description: StartXKit is a TypeScript CLI toolkit that scaffolds production-ready backend projects.
+description: StartXKit is a TypeScript CLI toolkit for creating backend projects with clear framework and architecture choices.
 ---
 
-StartXKit is a TypeScript CLI toolkit that scaffolds production-ready backend projects. Think `create-vite` but for backends.
+StartXKit helps you create a backend project without deciding every folder, script, and starter file by hand.
 
-## What It Does
+It is similar in spirit to `create-vite`, but focused on backend APIs. You choose a framework, an architecture, and a few optional features. StartXKit writes a working TypeScript project that you can run, extend, and inspect.
 
-- **Scaffolds a full project** with a single command: `npm create @startxkit@latest`
-- **Generates modules** with routes, controllers, services, and repositories: `npx @startxkit/cli add module users`
-- **Supports 3 frameworks**: Express, Fastify, and Hono
-- **Supports 3 architectures**: Minimal, Modular, and Layered
-- **Optional features**: CORS, env config, Zod validation, logging, error handler, Docker
+## What StartXKit Generates
 
-## Quick Start
+- A TypeScript backend project with `package.json`, `tsconfig.json`, and `startxkit.config.json`
+- A working health endpoint
+- Framework-specific server setup for Express, Fastify, or Hono
+- One of three architecture layouts: minimal, modular, or layered
+- Optional CORS, env config, Zod validation, Pino logging, error handling, Vitest, and Docker
+- A project CLI for adding modules after the project is created
+
+## The Big Picture
+
+```text
+create command
+  |
+  v
+choose framework + architecture + features
+  |
+  v
+generated project
+  |
+  +-- run the API
+  +-- add modules
+  +-- inspect config with doctor/info
+```
+
+## Framework Choices
+
+| Framework | Best fit |
+| --- | --- |
+| Express | Familiar Node.js APIs, middleware-heavy apps, broad ecosystem |
+| Fastify | High-throughput APIs, plugin-based organization, built-in logger support |
+| Hono | Small, fast APIs with a clean router model and lightweight runtime footprint |
+
+## Architecture Choices
+
+| Architecture | Layout style | Best fit |
+| --- | --- | --- |
+| Minimal | Flat route files | Prototypes, small APIs, simple services |
+| Modular | `src/modules/users/...` | Feature-based APIs where each module owns its files |
+| Layered | `src/routes`, `src/controllers`, `src/services`, ... | Larger APIs that need strict separation by responsibility |
+
+## First Command
 
 ```sh
 npm create @startxkit@latest
 ```
 
-Follow the interactive prompts. In under a minute, you'll have a runnable backend.
+After generation:
 
-## Project Structure
+```sh
+cd my-api
+pnpm dev
+```
+
+Then open the health endpoint. With the default prefix, it is:
 
 ```text
-my-api/
-  src/
-    app.ts              # App creation with middleware
-    server.ts            # Entry point
-    config/              # Env, CORS, etc.
-    shared/              # Errors, middlewares, utilities
-    modules/             # Feature modules
-      health/            # Built-in health check
-        health.route.ts
-        health.controller.ts
-    routes/
-      index.ts           # Central route mounting
-  startxkit.config.json  # Project config
-  package.json
-  tsconfig.json
+http://localhost:4000/api/v1/health
 ```
+
+## What To Read Next
+
+- Start with [Getting Started](/docs/getting-started) if you are creating your first project.
+- Read [add module](/docs/cli/add-module) when you want to add `users`, `auth`, `products`, or another feature.
+- Read the architecture pages if you are choosing between minimal, modular, and layered.

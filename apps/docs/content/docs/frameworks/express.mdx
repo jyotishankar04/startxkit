@@ -1,30 +1,28 @@
 ---
 title: Express
-description: Generate production-ready Express projects with layered architecture and middleware support.
+description: Generate Express APIs with middleware support and predictable project structure.
 ---
 
-Express is the most popular Node.js framework. StartXKit generates a production-ready Express project with a clean layered structure and middleware support out of the box.
+Express is the most familiar Node.js web framework. It is a good choice when you want a large ecosystem, simple middleware composition, and conventional request/response handlers.
 
-## Quick Start
+## Choose Express When
 
-```sh
-npm create @startxkit@latest
-```
+- Your team already knows Express
+- You want the largest middleware ecosystem
+- You are building a traditional REST API
+- You want simple `req` and `res` handler functions
 
-Select **Express** when prompted for framework.
+## Generated Entry Points
 
-## Generated Structure (Layered)
+Express projects generate:
 
 ```text
 src/
-  app.ts                # Express app factory with middleware setup
-  server.ts             # Server entry point
-  config/               # Env vars, CORS config
-  shared/               # Error types, middlewares, utilities
-  modules/              # Feature modules
-  routes/
-    index.ts            # Central route registration
+  app.ts       # creates and configures the Express app
+  server.ts    # starts the HTTP server
 ```
+
+`app.ts` owns middleware and route mounting. `server.ts` owns the port and startup behavior.
 
 ## Route Example
 
@@ -33,22 +31,50 @@ import { Router } from "express";
 import { UsersController } from "./users.controller";
 
 const router = Router();
-const controller = new UsersController();
 
-router.get("/", controller.getAll);
-router.post("/", controller.create);
-router.get("/:id", controller.getById);
-router.patch("/:id", controller.update);
-router.delete("/:id", controller.delete);
+router.get("/", UsersController.getAll);
+router.post("/", UsersController.create);
+router.get("/:id", UsersController.getById);
+router.patch("/:id", UsersController.update);
+router.delete("/:id", UsersController.remove);
 
 export default router;
 ```
 
-## Dependencies
+## Middleware Flow
 
-- `express` — HTTP framework
-- `cors` — Cross-origin resource sharing
-- `dotenv` — Environment variable loading
-- `zod` — Request/response validation
-- `pino` — Structured logging
-- `vitest` — Unit and integration testing
+```text
+request
+  |
+  v
+express.json()
+  |
+  v
+optional CORS
+  |
+  v
+API routes
+  |
+  v
+not found middleware
+  |
+  v
+optional error handler
+```
+
+## Optional Features
+
+| Feature | What it adds |
+| --- | --- |
+| CORS | `cors` package and `src/config/cors.ts` |
+| Env config | `dotenv` and `src/config/env.ts` |
+| Error handler | shared error classes and middleware |
+| Pino logger | `pino` dependency |
+| Zod validation | `zod` dependency and validator-ready module files |
+| Vitest | `test` script and `vitest` dependency |
+
+## Architecture Notes
+
+- Minimal Express projects use route files with inline handlers.
+- Modular Express projects use `src/modules/{feature}`.
+- Layered Express projects use top-level `src/routes`, `src/controllers`, `src/services`, and related layer folders.

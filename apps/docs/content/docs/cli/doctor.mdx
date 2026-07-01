@@ -1,9 +1,16 @@
 ---
 title: doctor
-description: Run diagnostic checks on your StartXKit project configuration.
+description: Run diagnostic checks on a generated StartXKit project.
 ---
 
-The `doctor` command runs a diagnostic check on your StartXKit project to ensure everything is configured correctly. Use it to catch misconfigurations early.
+The `doctor` command checks whether the current folder looks like a valid StartXKit project.
+
+Use it when:
+
+- You moved files manually
+- `add module` fails
+- You are not sure which project configuration is active
+- You want a quick sanity check before committing generated code
 
 ## Usage
 
@@ -11,37 +18,48 @@ The `doctor` command runs a diagnostic check on your StartXKit project to ensure
 npx @startxkit/cli doctor
 ```
 
-## Checks Performed
+Run it from the generated project root.
 
-- **Config file** — verifies `startxkit.config.json` exists and is valid JSON
-- **Package file** — verifies `package.json` exists
-- **Module directory** — confirms the configured module directory exists
-- **Framework** — validates the framework is one of `express`, `fastify`, or `hono`
-- **Architecture** — validates the architecture is `minimal`, `modular`, or `layered`
-- **Package manager** — validates it is `pnpm`, `npm`, `yarn`, or `bun`
+## What It Checks
+
+| Check | Meaning |
+| --- | --- |
+| `startxkit.config.json` | The project has a StartXKit config file |
+| `package.json` | The folder is a Node.js project |
+| Module directory | The configured module root exists |
+| Framework | The framework is `express`, `fastify`, or `hono` |
+| Architecture | The architecture is `minimal`, `modular`, or `layered` |
+| Package manager | The package manager is `pnpm`, `npm`, `yarn`, or `bun` |
 
 ## Example Output
 
 ```text
-✓ startxkit.config.json found
-✓ package.json found
-✓ Module directory "src/modules" exists
-✓ Framework: express
-✓ Architecture: modular
-✓ Package manager: pnpm
-
-All checks passed!
+✓ startxkit.config.json
+✓ package.json
+✓ module directory
+✓ framework supported
+✓ architecture supported
+✓ package manager supported
 ```
 
-## Troubleshooting
+## Module Directory Meaning
 
-If any check fails, you'll see a `✗` marker with a description:
+The module directory depends on architecture:
 
-```text
-✓ startxkit.config.json found
-✗ package.json not found — run "npm init" first
-✓ Module directory "src/modules" exists
-✗ Unknown framework "koa" in config
+| Architecture | Module directory |
+| --- | --- |
+| Minimal | `src` |
+| Modular | `src/modules` |
+| Layered | `src` |
+
+This is intentional. Modular projects store each feature under `src/modules`, while layered projects write route/controller/service files into top-level layer folders under `src`.
+
+## If A Check Fails
+
+Fix the reported file or config value, then run:
+
+```sh
+npx @startxkit/cli doctor
 ```
 
-Fix the reported issues and run `npx @startxkit/cli doctor` again.
+again.

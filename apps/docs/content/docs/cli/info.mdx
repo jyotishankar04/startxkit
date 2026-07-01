@@ -1,9 +1,11 @@
 ---
 title: info
-description: Print your project's current StartXKit configuration.
+description: Print the current StartXKit project configuration.
 ---
 
-The `info` command prints your project's current configuration as defined in `startxkit.config.json`. Useful for verifying settings at a glance.
+The `info` command prints the values from `startxkit.config.json`.
+
+Use it when you want to quickly confirm which framework, architecture, API prefix, and validation option a project uses.
 
 ## Usage
 
@@ -11,30 +13,37 @@ The `info` command prints your project's current configuration as defined in `st
 npx @startxkit/cli info
 ```
 
-## Output Fields
-
-- **Framework** — Express, Fastify, or Hono
-- **Language** — TypeScript (JavaScript coming soon)
-- **Architecture** — minimal, modular, or layered
-- **Module directory** — where feature modules live (`src/modules`)
-- **API prefix** — global route prefix (`/api/v1`, `/api`, or none)
-- **Validation** — Zod or none
-- **Auth** — currently shows as disabled
-- **Database** — currently shows as disabled
-- **ORM** — currently shows as disabled
+Run it from the generated project root.
 
 ## Example Output
 
 ```text
-Framework:    express
-Language:     typescript
-Architecture: modular
-Module Dir:   src/modules
-API Prefix:   /api/v1
-Validation:   zod
-Auth:         disabled
-Database:     disabled
-ORM:          disabled
+StartXKit 0.1.4
+Framework: express
+Language: typescript
+Architecture: layered
+Module directory: src
+API prefix: /api/v1
+Validation: zod
+Auth: disabled
+Database: disabled
+ORM: disabled
 ```
 
-*Auth, database, and ORM are included for future compatibility and always show as disabled in the current release.*
+## Fields
+
+| Field | Meaning |
+| --- | --- |
+| Framework | The HTTP framework used by the project |
+| Language | The generated language, currently TypeScript |
+| Architecture | The folder layout strategy |
+| Module directory | The root used by module generation |
+| API prefix | The global prefix before generated routes |
+| Validation | The selected validation library |
+| Auth | Reserved for future auth support |
+| Database | Reserved for future database support |
+| ORM | Reserved for future ORM support |
+
+## Why It Matters
+
+`add module` uses these values to decide where files should be written. If the info output says `architecture: layered`, new modules will be written into layer folders such as `src/routes` and `src/controllers`.
