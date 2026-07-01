@@ -1,0 +1,88 @@
+---
+title: Changelog
+description: Notable changes in StartXKit releases.
+---
+
+This page tracks notable StartXKit changes in plain language.
+
+## 0.1.4
+
+### Architecture Templates
+
+StartXKit now generates different project layouts for each architecture.
+
+```text
+minimal
+  route files with inline handlers
+
+modular
+  src/modules/{feature}/...
+
+layered
+  src/routes
+  src/controllers
+  src/services
+  src/repositories
+  src/interfaces
+  src/validators
+```
+
+This fixes the earlier behavior where minimal, modular, and layered projects looked too similar.
+
+### Add Module
+
+`npx @startxkit/cli add module users` now respects both the selected architecture and selected module depth.
+
+Supported depth choices:
+
+- Route + Controller
+- Route + Controller + Service
+- Route + Controller + Service + Repository
+- Full: Route + Controller + Service + Repository + Interface + Validator
+
+Modular projects write module files under `src/modules/users`. Layered projects write files into top-level layer folders.
+
+### Fastify And Hono Feature Parity
+
+Fastify and Hono templates now support:
+
+- CORS config
+- Env config
+- Error handlers
+
+These options are no longer silently ignored for non-Express projects.
+
+### Documentation
+
+The docs now explain:
+
+- Which architecture to choose
+- How module generation works
+- How dependency injection affects generated modules
+- Framework-specific route patterns
+
+## 0.1.1
+
+### Documentation Site
+
+Added the Fumadocs-powered documentation site with pages for:
+
+- Getting started
+- CLI commands
+- Frameworks
+- Architectures
+- Roadmap
+
+## 0.1.0
+
+### Initial MVP
+
+Initial StartXKit MVP:
+
+- Interactive project creation
+- Express, Fastify, Hono
+- TypeScript templates
+- Minimal, modular, layered architecture choices
+- Module generation
+- Health endpoint
+- Optional CORS, env config, validation, logging, error handler, tests, and Docker
