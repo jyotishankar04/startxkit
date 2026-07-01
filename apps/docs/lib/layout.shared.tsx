@@ -13,7 +13,7 @@ export function baseOptions(): BaseLayoutProps {
       },
       {
         text: "GitHub",
-        url: "https://github.com/anomalyco/startxkit",
+        url: "https://github.com/jyotishankar04/startxkit",
         external: true,
       },
     ],

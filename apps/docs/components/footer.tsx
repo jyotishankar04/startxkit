@@ -66,7 +66,7 @@ export function Footer() {
             &copy; 2026 StartXKit. MIT Licensed.
           </p>
           <a
-            href="https://github.com/anomalyco/startxkit"
+            href="https://github.com/jyotishankar04/startxkit"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground transition-colors hover:text-foreground"

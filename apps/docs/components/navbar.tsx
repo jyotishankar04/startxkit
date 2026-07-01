@@ -82,7 +82,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2 py-3">
             <ThemeToggle />
             <a
-              href="https://github.com/anomalyco/startxkit"
+              href="https://github.com/jyotishankar04/startxkit"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden size-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:flex"
@@ -131,7 +131,7 @@ export default function Navbar() {
               ))}
               <li>
                 <a
-                  href="https://github.com/anomalyco/startxkit"
+                  href="https://github.com/jyotishankar04/startxkit"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
