@@ -1,6 +1,6 @@
 {
   "name": "@startxkit/create",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "bin": {
     "create-startxkit": "dist/index.js"
@@ -20,7 +20,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@startxkit/core": "^0.1.4",
+    "@startxkit/core": "^0.1.5",
     "@clack/prompts": "^0.10.1",
     "fs-extra": "^11.2.0",
     "picocolors": "^1.1.1"

@@ -78,7 +78,7 @@ export async function createProjectFromTemplates(
     path.join(options.targetDir, "package.json"),
     {
       name: toKebabCase(options.projectName),
-      version: "0.1.4",
+      version: "0.1.5",
       private: true,
       type: "module",
       scripts: {
@@ -96,7 +96,7 @@ export async function createProjectFromTemplates(
 
   await writeConfig(options.targetDir, {
     tool: "startxkit",
-    version: "0.1.4",
+    version: "0.1.5",
     framework,
     language: options.language,
     architecture: options.architecture,

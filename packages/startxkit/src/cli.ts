@@ -6,7 +6,7 @@ import { infoCommand } from "./commands/info.command";
 
 const program = new Command();
 
-program.name("startxkit").description("StartXKit project CLI").version("0.1.3");
+program.name("startxkit").description("StartXKit project CLI").version("0.1.5");
 
 const add = program.command("add").description("Add generated resources");
 add.command("module <name>").description("Add a backend module").action(addModuleCommand);

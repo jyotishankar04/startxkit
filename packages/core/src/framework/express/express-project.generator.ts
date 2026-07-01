@@ -64,7 +64,7 @@ async function writePackageJson(options: ProjectOptions): Promise<void> {
     path.join(options.targetDir, "package.json"),
     {
       name: toKebabCase(options.projectName),
-      version: "0.1.4",
+      version: "0.1.5",
       private: true,
       type: "module",
       scripts,
@@ -103,7 +103,7 @@ async function createExpressProject(options: ProjectOptions): Promise<void> {
   await writePackageJson(options);
   await writeConfig(options.targetDir, {
     tool: "startxkit",
-    version: "0.1.4",
+    version: "0.1.5",
     framework: "express",
     language: options.language,
     architecture: options.architecture,

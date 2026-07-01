@@ -3,7 +3,7 @@ import { validateConfig } from "./validate-config";
 
 const validConfig = {
   tool: "startxkit",
-  version: "0.1.4",
+  version: "0.1.5",
   framework: "express",
   language: "typescript",
   architecture: "layered",

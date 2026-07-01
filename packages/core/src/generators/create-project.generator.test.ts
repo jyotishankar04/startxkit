@@ -42,7 +42,7 @@ function projectOptions(targetDir: string, overrides: Partial<ProjectOptions>): 
 function configFromOptions(options: ProjectOptions): StartXKitConfig {
   return {
     tool: "startxkit",
-    version: "0.1.4",
+    version: "0.1.5",
     framework: options.framework,
     language: options.language,
     architecture: options.architecture,
