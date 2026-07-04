@@ -8,20 +8,16 @@ import { copyTemplate } from "../../template-engine/copy-template";
 import { resolveTemplatePath } from "../../template-engine/resolve-template-path";
 import { StartXKitError } from "../../utils/errors";
 import { toKebabCase, toPluralName } from "../../utils/case";
-import { moduleVariables } from "../express/express-project.generator";
+import { importExtension, moduleVariables, sourceExtension } from "../express/express-project.generator";
 import { fallbackDependencyVersion, resolveDependencyVersions } from "../../package-manager/dependency-versions";
 
 export async function createProjectFromTemplates(
   framework: Framework,
   options: ProjectOptions,
 ): Promise<void> {
-  if (options.language !== "typescript") {
-    throw new StartXKitError("JavaScript templates are not supported in the MVP.");
-  }
-
-  let templateDir = resolveTemplatePath(framework, "typescript", options.architecture, "base");
+  let templateDir = resolveTemplatePath(framework, options.language, options.architecture, "base");
   if (!(await hasTemplateFiles(templateDir))) {
-    templateDir = resolveTemplatePath(framework, "typescript", "layered", "base");
+    templateDir = resolveTemplatePath(framework, options.language, "layered", "base");
   }
 
   await copyTemplate(
@@ -67,27 +63,37 @@ export async function createProjectFromTemplates(
   if (options.validation === "zod") dependencies.zod = fallbackDependencyVersion("zod");
   if (options.logger === "pino") dependencies.pino = fallbackDependencyVersion("pino");
 
-  const devDependencies: Record<string, string> = {
-    "@types/node": fallbackDependencyVersion("@types/node"),
-    tsx: fallbackDependencyVersion("tsx"),
-    typescript: fallbackDependencyVersion("typescript"),
-  };
+  const isJavaScript = options.language === "javascript";
+  const devDependencies: Record<string, string> = isJavaScript
+    ? {}
+    : {
+        "@types/node": fallbackDependencyVersion("@types/node"),
+        tsx: fallbackDependencyVersion("tsx"),
+        typescript: fallbackDependencyVersion("typescript"),
+      };
   if (options.addTesting) devDependencies.vitest = fallbackDependencyVersion("vitest");
+
+  const scripts: Record<string, string> = isJavaScript
+    ? {
+        dev: "node --watch src/server.js",
+        start: "node src/server.js",
+      }
+    : {
+        dev: "tsx watch src/server.ts",
+        build: "tsc",
+        start: "node dist/server.js",
+        typecheck: "tsc --noEmit",
+      };
+  if (options.addTesting) scripts.test = "vitest run --passWithNoTests";
 
   await fs.writeJson(
     path.join(options.targetDir, "package.json"),
     {
       name: toKebabCase(options.projectName),
-      version: "0.1.5",
+      version: "1.0.0",
       private: true,
       type: "module",
-      scripts: {
-        dev: "tsx watch src/server.ts",
-        build: "tsc",
-        start: "node dist/server.js",
-        typecheck: "tsc --noEmit",
-        ...(options.addTesting ? { test: "vitest run --passWithNoTests" } : {}),
-      },
+      scripts,
       dependencies: await resolveDependencyVersions(dependencies),
       devDependencies: await resolveDependencyVersions(devDependencies),
     },
@@ -96,7 +102,7 @@ export async function createProjectFromTemplates(
 
   await writeConfig(options.targetDir, {
     tool: "startxkit",
-    version: "0.1.5",
+      version: "1.0.0",
     framework,
     language: options.language,
     architecture: options.architecture,
@@ -126,16 +132,16 @@ export async function addModuleFromTemplates(
       : path.join(projectRoot, config.moduleDir, kebabName);
   const existsPath =
     config.architecture === "layered" || config.architecture === "minimal"
-      ? path.join(projectRoot, config.srcDir, "routes", `${kebabName}.route.ts`)
+      ? path.join(projectRoot, config.srcDir, "routes", `${kebabName}.route.${sourceExtension(config.language)}`)
       : targetDir;
 
   if ((await fs.pathExists(existsPath)) && !options.overwrite) {
     throw new StartXKitError(`Module "${options.name}" already exists.`);
   }
 
-  let templateDir = resolveTemplatePath(config.framework, "typescript", config.architecture, "module");
+  let templateDir = resolveTemplatePath(config.framework, config.language, config.architecture, "module");
   if (!(await hasTemplateFiles(templateDir))) {
-    templateDir = resolveTemplatePath(config.framework, "typescript", "layered", "module");
+    templateDir = resolveTemplatePath(config.framework, config.language, "layered", "module");
   }
   const written = await copyTemplate(
     templateDir,
@@ -143,10 +149,11 @@ export async function addModuleFromTemplates(
     moduleVariables(config, options),
   );
   const removed: string[] = [];
+  const extension = sourceExtension(config.language);
   const filePath = (folder: string, suffix: string) =>
     config.architecture === "layered"
-      ? path.join(folder, `${kebabName}.${suffix}.ts`)
-      : `${kebabName}.${suffix}.ts`;
+      ? path.join(folder, `${kebabName}.${suffix}.${extension}`)
+      : `${kebabName}.${suffix}.${extension}`;
 
   if (config.architecture === "minimal") {
     removed.push(
@@ -178,10 +185,11 @@ async function registerSimpleFrameworkRoute(
   config: StartXKitConfig,
   kebabName: string,
 ): Promise<void> {
-  const serverPath = path.join(projectRoot, config.srcDir, "server.ts");
+  const serverPath = path.join(projectRoot, config.srcDir, `server.${sourceExtension(config.language)}`);
   if (!(await fs.pathExists(serverPath))) return;
 
   const camelName = kebabName.replace(/-([a-z])/g, (_, char: string) => char.toUpperCase());
+  const importSuffix = importExtension(config.language);
   let content = await fs.readFile(serverPath, "utf8");
 
   if (config.framework === "fastify") {
@@ -189,7 +197,7 @@ async function registerSimpleFrameworkRoute(
       config.architecture === "layered" || config.architecture === "minimal"
         ? `./routes/${kebabName}.route`
         : `./modules/${kebabName}/${kebabName}.route`;
-    const importLine = `import { ${camelName}Routes } from "${importPath}";`;
+    const importLine = `import { ${camelName}Routes } from "${importPath}${importSuffix}";`;
     const routeLine = `app.register(${camelName}Routes, { prefix: "${config.apiPrefix}/${kebabName}" });`;
     if (!content.includes(importLine)) content = insertImport(content, importLine);
     if (!content.includes(routeLine)) content = content.replace("\napp.listen", `\n${routeLine}\n\napp.listen`);
@@ -200,7 +208,7 @@ async function registerSimpleFrameworkRoute(
       config.architecture === "layered" || config.architecture === "minimal"
         ? `./routes/${kebabName}.route`
         : `./modules/${kebabName}/${kebabName}.route`;
-    const importLine = `import { ${camelName}Routes } from "${importPath}";`;
+    const importLine = `import { ${camelName}Routes } from "${importPath}${importSuffix}";`;
     const routeLine = `app.route("${config.apiPrefix}/${kebabName}", ${camelName}Routes);`;
     if (!content.includes(importLine)) content = insertImport(content, importLine);
     if (!content.includes(routeLine)) content = content.replace("\nserve({", `\n${routeLine}\n\nserve({`);

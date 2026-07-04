@@ -1,0 +1,11 @@
+
+export async function healthRoutes(app) {
+  app.get("/", async () => ({
+    success,
+    message: "Server is healthy",
+    data: {
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+    },
+  }));
+}

@@ -1,4 +1,4 @@
-import fs from "fs-extra";
+﻿import fs from "fs-extra";
 import path from "node:path";
 import pc from "picocolors";
 import { cancel, confirm, intro, isCancel, note, outro, select, text } from "@clack/prompts";
@@ -27,12 +27,12 @@ function abortIfCancel<T>(value: T | symbol): T {
 const titleCase = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
 const startXKitBanner = String.raw`
-██████╗  █████╗  ██████╗██╗  ██╗███████╗███╗   ██╗██████╗ ██╗  ██╗██╗████████╗
-██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝████╗  ██║██╔══██╗██║ ██╔╝██║╚══██╔══╝
-██████╔╝███████║██║     █████╔╝ █████╗  ██╔██╗ ██║██║  ██║█████╔╝ ██║   ██║
-██╔══██╗██╔══██║██║     ██╔═██╗ ██╔══╝  ██║╚██╗██║██║  ██║██╔═██╗ ██║   ██║
-██████╔╝██║  ██║╚██████╗██║  ██╗███████╗██║ ╚████║██████╔╝██║  ██╗██║   ██║
-╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝╚═╝   ╚═╝
+███████╗████████╗ █████╗ ██████╗ ████████╗██╗  ██╗██╗  ██╗██╗████████╗
+██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝╚██╗██╔╝██║ ██╔╝██║╚══██╔══╝
+███████╗   ██║   ███████║██████╔╝   ██║    ╚███╔╝ █████╔╝ ██║   ██║   
+╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ██╔██╗ ██╔═██╗ ██║   ██║   
+███████║   ██║   ██║  ██║██║  ██║   ██║   ██╔╝ ██╗██║  ██╗██║   ██║   
+╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝   ╚═╝
 `;
 
 export async function runCreate(): Promise<void> {
@@ -76,7 +76,7 @@ export async function runCreate(): Promise<void> {
         message: "Language",
         options: [
           { label: "TypeScript", value: "typescript" },
-          { label: "JavaScript (not supported yet)", value: "javascript" },
+          { label: "JavaScript", value: "javascript" },
         ],
         initialValue: "typescript",
       }),
@@ -263,3 +263,4 @@ export async function runCreate(): Promise<void> {
     process.exit(1);
   }
 }
+

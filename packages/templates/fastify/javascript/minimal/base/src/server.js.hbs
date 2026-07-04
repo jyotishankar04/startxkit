@@ -1,0 +1,20 @@
+{{#if hasEnv}}import "dotenv/config";
+{{/if}}{{#if hasCors}}import fastifyCors from "@fastify/cors";
+import { corsOptions } from "./config/cors.js";
+{{/if}}import Fastify from "fastify";
+{{#if hasEnv}}import { env } from "./config/env.js";
+{{/if}}{{#if hasErrorHandler}}import { errorHandler } from "./shared/errors/error-handler.js";
+{{/if}}import { healthRoutes } from "./routes/health.route.js";
+
+const app = Fastify({ logger: {{#if hasLogger}}true{{else}}false{{/if}} });
+const port = {{#if hasEnv}}env.PORT{{else}}Number(process.env.PORT ?? 4000){{/if}};
+
+{{#if hasCors}}await app.register(fastifyCors, corsOptions);
+{{/if}}{{#if hasErrorHandler}}app.setErrorHandler(errorHandler);
+{{/if}}
+app.register(healthRoutes, { prefix: "{{apiPrefix}}/health" });
+
+app.listen({ port, host: "0.0.0.0" }).catch((error) => {
+  app.log.error(error);
+  process.exit(1);
+});

@@ -1,6 +1,7 @@
 import fs from "fs-extra";
 import os from "node:os";
 import path from "node:path";
+import { execa } from "execa";
 import { afterEach, describe, expect, it } from "vitest";
 import { addModule } from "./add-module.generator";
 import { createProject } from "./create-project.generator";
@@ -42,7 +43,7 @@ function projectOptions(targetDir: string, overrides: Partial<ProjectOptions>): 
 function configFromOptions(options: ProjectOptions): StartXKitConfig {
   return {
     tool: "startxkit",
-    version: "0.1.5",
+      version: "1.0.0",
     framework: options.framework,
     language: options.language,
     architecture: options.architecture,
@@ -64,6 +65,19 @@ async function makeTempDir() {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "startxkit-test-"));
   tempDirs.push(dir);
   return dir;
+}
+
+async function collectFiles(dir: string, extension: string): Promise<string[]> {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  const files: string[] = [];
+
+  for (const entry of entries) {
+    const entryPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) files.push(...(await collectFiles(entryPath, extension)));
+    if (entry.isFile() && entry.name.endsWith(extension)) files.push(entryPath);
+  }
+
+  return files;
 }
 
 afterEach(async () => {
@@ -183,6 +197,77 @@ describe("createProject", () => {
       expect(server).toContain(framework === "fastify" ? "fastifyCors" : "hono/cors");
       expect(server).toContain(framework === "fastify" ? "setErrorHandler" : "onError");
       expect(server).toContain("env.PORT");
+    }
+  });
+
+  it("generates JavaScript projects without TypeScript tooling", async () => {
+    for (const framework of ["express", "fastify", "hono"] as const) {
+      for (const architecture of ["minimal", "modular", "layered"] as const) {
+        const targetDir = await makeTempDir();
+        const options = projectOptions(targetDir, {
+          framework,
+          architecture,
+          language: "javascript",
+          addCors: true,
+          addTesting: true,
+        });
+
+        await createProject(options);
+
+        const packageJson = await fs.readJson(path.join(targetDir, "package.json"));
+        await expect(fs.pathExists(path.join(targetDir, "tsconfig.json"))).resolves.toBe(false);
+        await expect(fs.pathExists(path.join(targetDir, "src", "server.js"))).resolves.toBe(true);
+        await expect(fs.pathExists(path.join(targetDir, "src", "server.ts"))).resolves.toBe(false);
+        const corsConfig = await fs.readFile(path.join(targetDir, "src", "config", "cors.js"), "utf8");
+        expect(corsConfig).toContain(framework === "hono" ? 'origin: "*"' : "origin: true");
+        expect(corsConfig).toContain("credentials: true");
+        expect(packageJson.scripts).toEqual({
+          dev: "node --watch src/server.js",
+          start: "node src/server.js",
+          test: "vitest run --passWithNoTests",
+        });
+        expect(packageJson.devDependencies).not.toHaveProperty("typescript");
+        expect(packageJson.devDependencies).not.toHaveProperty("tsx");
+        expect(packageJson.devDependencies).not.toHaveProperty("@types/node");
+      }
+    }
+  });
+
+  it("adds JavaScript modules with js file extensions and route imports", async () => {
+    for (const framework of ["express", "fastify", "hono"] as const) {
+      const targetDir = await makeTempDir();
+      const options = projectOptions(targetDir, {
+        framework,
+        language: "javascript",
+        architecture: "layered",
+        dependencyInjection: true,
+      });
+
+      await createProject(options);
+      await addModule(configFromOptions(options), {
+        name: "users",
+        layer: "full",
+        crud: true,
+        validation: true,
+        tests: false,
+        cwd: targetDir,
+      });
+
+      await expect(fs.pathExists(path.join(targetDir, "src", "routes", "users.route.js"))).resolves.toBe(true);
+      await expect(fs.pathExists(path.join(targetDir, "src", "controllers", "users.controller.js"))).resolves.toBe(true);
+      await expect(fs.pathExists(path.join(targetDir, "src", "services", "users.service.js"))).resolves.toBe(true);
+      await expect(fs.pathExists(path.join(targetDir, "src", "repositories", "users.repository.js"))).resolves.toBe(true);
+      await expect(fs.pathExists(path.join(targetDir, "src", "validators", "users.validation.js"))).resolves.toBe(true);
+
+      const routeRegistry =
+        framework === "express"
+          ? await fs.readFile(path.join(targetDir, "src", "routes", "index.js"), "utf8")
+          : await fs.readFile(path.join(targetDir, "src", "server.js"), "utf8");
+      expect(routeRegistry).toContain("users.route.js");
+
+      for (const file of await collectFiles(path.join(targetDir, "src"), ".js")) {
+        await execa("node", ["--check", file]);
+      }
     }
   });
 });

@@ -1,0 +1,14 @@
+{{#if hasEnv}}import "dotenv/config";
+{{/if}}import { createApp } from "./app.js";
+{{#if hasEnv}}import { env } from "./config/env.js";
+{{/if}}{{#if isPino}}import pino from "pino";
+{{/if}}
+
+const app = createApp();
+const port = {{#if hasEnv}}env.PORT{{else}}Number(process.env.PORT ?? 4000){{/if}};
+{{#if isPino}}const logger = pino();
+{{/if}}
+
+app.listen(port, () => {
+  {{#if isPino}}logger.info(`Server running on http://localhost:${port}`);{{else}}{{#if hasLogger}}console.log(`Server running on http://localhost:${port}`);{{/if}}{{/if}}
+});

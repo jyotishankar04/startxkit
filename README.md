@@ -1,6 +1,6 @@
 # StartXKit
 
-StartXKit is a TypeScript CLI toolkit for generating backend boilerplates for Express, Fastify, and Hono.
+StartXKit is a CLI toolkit for generating TypeScript and JavaScript backend boilerplates for Express, Fastify, and Hono.
 
 ## MVP Scope
 
@@ -35,6 +35,7 @@ npx @startxkit/cli info
 ## Supported
 
 - TypeScript
+- JavaScript
 - Express
 - Fastify
 - Hono
@@ -63,7 +64,6 @@ npx @startxkit/cli info
 - JWT
 - Session management
 - NestJS
-- JavaScript templates
 
 ## Development
 
@@ -90,6 +90,5 @@ pnpm test
 - Auth generators
 - Database and ORM adapters
 - NestJS support
-- JavaScript templates
 - More validation options
 - Richer generated test suites

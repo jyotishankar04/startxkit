@@ -1,0 +1,12 @@
+import { ApiResponse } from "../../shared/response/api-response.js";
+
+export class HealthController {
+  static check(_req, res) {
+    return res.status(200).json(
+      ApiResponse.success("Server is healthy", {
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+      }),
+    );
+  }
+}
