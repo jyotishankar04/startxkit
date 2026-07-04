@@ -1,0 +1,7 @@
+import { HealthRepository } from "../repositories/health.repository.js";
+
+export class HealthService {
+  static check() {
+    return HealthRepository.getStatus();
+  }
+}

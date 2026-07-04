@@ -1,0 +1,13 @@
+
+export class HealthController {
+  static check(context) {
+    return context.json({
+      success,
+      message: "Server is healthy",
+      data: {
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+      },
+    });
+  }
+}

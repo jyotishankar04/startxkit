@@ -1,0 +1,12 @@
+import { HealthService } from "../services/health.service.js";
+
+export class HealthController {
+  static check(_request, reply) {
+    const data = HealthService.check();
+    return reply.code(200).send({
+      success,
+      message: "Server is healthy",
+      data,
+    });
+  }
+}

@@ -7,10 +7,17 @@ import type { ProjectOptions } from "../../types/project-options";
 import { writeConfig } from "../../config/write-config";
 import { copyTemplate } from "../../template-engine/copy-template";
 import { resolveTemplatePath } from "../../template-engine/resolve-template-path";
-import { StartXKitError } from "../../utils/errors";
 import { toCamelCase, toKebabCase, toPascalCase, toPluralName, toSingularName } from "../../utils/case";
 import { addExpressModule } from "./express-module.generator";
 import { fallbackDependencyVersion, resolveDependencyVersions } from "../../package-manager/dependency-versions";
+
+export function sourceExtension(language: ProjectOptions["language"] | StartXKitConfig["language"]): "ts" | "js" {
+  return language === "javascript" ? "js" : "ts";
+}
+
+export function importExtension(language: ProjectOptions["language"] | StartXKitConfig["language"]): "" | ".js" {
+  return language === "javascript" ? ".js" : "";
+}
 
 function projectVariables(options: ProjectOptions) {
   return {
@@ -35,28 +42,36 @@ function projectVariables(options: ProjectOptions) {
 
 async function writePackageJson(options: ProjectOptions): Promise<void> {
   const dependencies: Record<string, string> = { express: fallbackDependencyVersion("express") };
-  const devDependencies: Record<string, string> = {
-    "@types/express": fallbackDependencyVersion("@types/express"),
-    "@types/node": fallbackDependencyVersion("@types/node"),
-    tsx: fallbackDependencyVersion("tsx"),
-    typescript: fallbackDependencyVersion("typescript"),
-  };
+  const isJavaScript = options.language === "javascript";
+  const devDependencies: Record<string, string> = isJavaScript
+    ? {}
+    : {
+        "@types/express": fallbackDependencyVersion("@types/express"),
+        "@types/node": fallbackDependencyVersion("@types/node"),
+        tsx: fallbackDependencyVersion("tsx"),
+        typescript: fallbackDependencyVersion("typescript"),
+      };
 
   if (options.addCors) {
     dependencies.cors = fallbackDependencyVersion("cors");
-    devDependencies["@types/cors"] = fallbackDependencyVersion("@types/cors");
+    if (!isJavaScript) devDependencies["@types/cors"] = fallbackDependencyVersion("@types/cors");
   }
   if (options.addEnv) dependencies.dotenv = fallbackDependencyVersion("dotenv");
   if (options.validation === "zod") dependencies.zod = fallbackDependencyVersion("zod");
   if (options.logger === "pino") dependencies.pino = fallbackDependencyVersion("pino");
   if (options.addTesting) devDependencies.vitest = fallbackDependencyVersion("vitest");
 
-  const scripts: Record<string, string> = {
-    dev: "tsx watch src/server.ts",
-    build: "tsc",
-    start: "node dist/server.js",
-    typecheck: "tsc --noEmit",
-  };
+  const scripts: Record<string, string> = isJavaScript
+    ? {
+        dev: "node --watch src/server.js",
+        start: "node src/server.js",
+      }
+    : {
+        dev: "tsx watch src/server.ts",
+        build: "tsc",
+        start: "node dist/server.js",
+        typecheck: "tsc --noEmit",
+      };
   
   if (options.addTesting) scripts.test = "vitest run --passWithNoTests";
 
@@ -64,7 +79,7 @@ async function writePackageJson(options: ProjectOptions): Promise<void> {
     path.join(options.targetDir, "package.json"),
     {
       name: toKebabCase(options.projectName),
-      version: "0.1.5",
+      version: "1.0.0",
       private: true,
       type: "module",
       scripts,
@@ -76,18 +91,14 @@ async function writePackageJson(options: ProjectOptions): Promise<void> {
 }
 
 async function createExpressProject(options: ProjectOptions): Promise<void> {
-  if (options.language !== "typescript") {
-    throw new StartXKitError("JavaScript templates are not supported in the MVP.");
-  }
-
   let templateDir = resolveTemplatePath(
     "express",
-    "typescript",
+    options.language,
     options.architecture,
     "base",
   );
   if (!(await hasTemplateFiles(templateDir))) {
-    templateDir = resolveTemplatePath("express", "typescript", "layered", "base");
+    templateDir = resolveTemplatePath("express", options.language, "layered", "base");
   }
   await copyTemplate(templateDir, options.targetDir, projectVariables(options));
   if (!options.addDocker) {
@@ -103,7 +114,7 @@ async function createExpressProject(options: ProjectOptions): Promise<void> {
   await writePackageJson(options);
   await writeConfig(options.targetDir, {
     tool: "startxkit",
-    version: "0.1.5",
+      version: "1.0.0",
     framework: "express",
     language: options.language,
     architecture: options.architecture,
@@ -129,6 +140,7 @@ export const expressGenerator: FrameworkGenerator = {
 export function moduleVariables(config: StartXKitConfig, options: ModuleOptions) {
   const kebabName = toPluralName(options.name);
   const isLayered = config.architecture === "layered";
+  const importSuffix = importExtension(config.language);
   return {
     ...options,
     name: options.name,
@@ -150,17 +162,17 @@ export function moduleVariables(config: StartXKitConfig, options: ModuleOptions)
     hasValidator: options.layer === "full" && options.validation,
     dependencyInjection: config.dependencyInjection === true,
     crud: options.crud,
-    routeImportPath: isLayered ? `../controllers/${kebabName}.controller` : `./${kebabName}.controller`,
-    serviceImportPath: isLayered ? `../services/${kebabName}.service` : `./${kebabName}.service`,
-    repositoryImportPath: isLayered ? `../repositories/${kebabName}.repository` : `./${kebabName}.repository`,
-    interfaceImportPath: isLayered ? `../interfaces/${kebabName}.interface` : `./${kebabName}.interface`,
+    routeImportPath: isLayered ? `../controllers/${kebabName}.controller${importSuffix}` : `./${kebabName}.controller${importSuffix}`,
+    serviceImportPath: isLayered ? `../services/${kebabName}.service${importSuffix}` : `./${kebabName}.service${importSuffix}`,
+    repositoryImportPath: isLayered ? `../repositories/${kebabName}.repository${importSuffix}` : `./${kebabName}.repository${importSuffix}`,
+    interfaceImportPath: isLayered ? `../interfaces/${kebabName}.interface${importSuffix}` : `./${kebabName}.interface${importSuffix}`,
   };
 }
 
 export async function resolveExpressModuleTemplate(config: StartXKitConfig): Promise<string> {
-  const templateDir = resolveTemplatePath("express", "typescript", config.architecture, "module");
+  const templateDir = resolveTemplatePath("express", config.language, config.architecture, "module");
   if (await hasTemplateFiles(templateDir)) return templateDir;
-  return resolveTemplatePath("express", "typescript", "layered", "module");
+  return resolveTemplatePath("express", config.language, "layered", "module");
 }
 
 async function hasTemplateFiles(templateDir: string): Promise<boolean> {

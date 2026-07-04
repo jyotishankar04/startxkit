@@ -1,0 +1,14 @@
+import { AppError } from "./app-error.js";
+
+export function errorHandler(error, context) {
+  const statusCode = error instanceof AppError ? error.statusCode : 500;
+  const message = error.message || "Internal server error";
+
+  return context.json(
+    {
+      success,
+      message,
+    },
+    statusCode,
+  );
+}

@@ -5,16 +5,18 @@ import type { ModuleOptions } from "../../types/module-options";
 import { copyTemplate } from "../../template-engine/copy-template";
 import { StartXKitError } from "../../utils/errors";
 import { toPluralName } from "../../utils/case";
-import { moduleVariables, resolveExpressModuleTemplate } from "./express-project.generator";
+import { importExtension, moduleVariables, resolveExpressModuleTemplate, sourceExtension } from "./express-project.generator";
 
 async function ensureRoutesIndex(projectRoot: string, config: StartXKitConfig): Promise<void> {
-  const routesPath = path.join(projectRoot, config.srcDir, "routes", "index.ts");
+  const extension = sourceExtension(config.language);
+  const importSuffix = importExtension(config.language);
+  const routesPath = path.join(projectRoot, config.srcDir, "routes", `index.${extension}`);
   if (!(await fs.pathExists(routesPath))) {
     await fs.ensureDir(path.dirname(routesPath));
     const healthImport =
       config.architecture === "layered" || config.architecture === "minimal"
-        ? 'import healthRoutes from "./health.route";'
-        : 'import healthRoutes from "../modules/health/health.route";';
+        ? `import healthRoutes from "./health.route${importSuffix}";`
+        : `import healthRoutes from "../modules/health/health.route${importSuffix}";`;
     await fs.writeFile(
       routesPath,
       [
@@ -38,13 +40,14 @@ async function registerModuleRoute(
   moduleName: string,
 ): Promise<void> {
   const kebabName = toPluralName(moduleName);
-  const routesPath = path.join(projectRoot, config.srcDir, "routes", "index.ts");
+  const routesPath = path.join(projectRoot, config.srcDir, "routes", `index.${sourceExtension(config.language)}`);
   let content = await fs.readFile(routesPath, "utf8");
+  const importSuffix = importExtension(config.language);
   const importPath =
     config.architecture === "layered" || config.architecture === "minimal"
       ? `./${kebabName}.route`
       : `../modules/${kebabName}/${kebabName}.route`;
-  const importLine = `import ${kebabName.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())}Routes from "${importPath}";`;
+  const importLine = `import ${kebabName.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())}Routes from "${importPath}${importSuffix}";`;
   const routeLine = `router.use("/${kebabName}", ${kebabName.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())}Routes);`;
 
   if (!content.includes(importLine)) {
@@ -74,7 +77,7 @@ export async function addExpressModule(
       : path.join(projectRoot, config.moduleDir, kebabName);
   const existsPath =
     config.architecture === "layered" || config.architecture === "minimal"
-      ? path.join(projectRoot, config.srcDir, "routes", `${kebabName}.route.ts`)
+      ? path.join(projectRoot, config.srcDir, "routes", `${kebabName}.route.${sourceExtension(config.language)}`)
       : targetDir;
 
   if ((await fs.pathExists(existsPath)) && !options.overwrite) {
@@ -88,10 +91,11 @@ export async function addExpressModule(
     moduleVariables(config, options),
   );
   const removed: string[] = [];
+  const extension = sourceExtension(config.language);
   const filePath = (folder: string, suffix: string) =>
     config.architecture === "layered"
-      ? path.join(folder, `${kebabName}.${suffix}.ts`)
-      : `${kebabName}.${suffix}.ts`;
+      ? path.join(folder, `${kebabName}.${suffix}.${extension}`)
+      : `${kebabName}.${suffix}.${extension}`;
 
   if (config.architecture === "minimal") {
     removed.push(

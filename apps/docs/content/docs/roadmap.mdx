@@ -3,11 +3,12 @@ title: Roadmap
 description: What StartXKit supports today and what is planned next.
 ---
 
-StartXKit is focused on a TypeScript backend scaffolding MVP. The current goal is to make the generated projects predictable, easy to inspect, and useful as a starting point for real APIs.
+StartXKit is focused on a TypeScript and JavaScript backend scaffolding MVP. The current goal is to make the generated projects predictable, easy to inspect, and useful as a starting point for real APIs.
 
 ## Available Now
 
 - Interactive project creation with `npm create @startxkit@latest`
+- Language choices: TypeScript and JavaScript
 - Framework choices: Express, Fastify, Hono
 - Architecture choices: minimal, modular, layered
 - Generated health endpoint
@@ -36,7 +37,6 @@ These are intentionally not part of the current MVP:
 - Authentication
 - Database setup
 - ORM setup
-- JavaScript templates
 - GraphQL
 - WebSockets
 - gRPC
@@ -53,12 +53,12 @@ Keeping these out of the MVP makes the generated projects smaller and easier to 
 | ORMs | Drizzle, Prisma |
 | API docs | OpenAPI or Swagger generation |
 | More runtimes | Serverless and deployment templates |
-| More languages | JavaScript templates |
+| More languages | Additional runtime or template targets |
 
 ## Design Principle
 
 StartXKit should generate code that developers can understand on day one.
 
-That means new features should not only add files. They should also preserve clear folder structure, readable generated code, and working TypeScript checks.
+That means new features should not only add files. They should also preserve clear folder structure, readable generated code, and working checks.
 
 Have a feature request? Open an issue on [GitHub](https://github.com/jyotishankar04/startxkit).

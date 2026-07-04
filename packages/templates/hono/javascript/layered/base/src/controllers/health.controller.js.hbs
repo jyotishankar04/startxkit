@@ -1,0 +1,12 @@
+import { HealthService } from "../services/health.service.js";
+
+export class HealthController {
+  static check(context) {
+    const data = HealthService.check();
+    return context.json({
+      success,
+      message: "Server is healthy",
+      data,
+    });
+  }
+}

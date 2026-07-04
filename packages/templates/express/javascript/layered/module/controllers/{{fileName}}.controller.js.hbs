@@ -1,0 +1,44 @@
+{{#if hasService}}import { {{pascalName}}Service } from "../services/{{fileName}}.service.js";
+{{/if}}
+import { ApiResponse } from "../shared/response/api-response.js";
+
+export class {{pascalName}}Controller {
+  {{#if dependencyInjection}}{{#if hasService}}constructor({{camelName}}Service) {
+    this.{{camelName}}Service = {{camelName}}Service;
+  }
+  {{else}}constructor() {}
+  {{/if}}{{/if}}
+  {{#if crud}}
+  {{#if dependencyInjection}}getAll = async (_req, res) =>{{else}}static async getAll(_req, res){{/if}} {
+    {{#if hasService}}const data = await {{#if dependencyInjection}}this.{{camelName}}Service{{else}}{{pascalName}}Service{{/if}}.getAll();{{else}}const data = [];{{/if}}
+    return res.status(200).json(ApiResponse.success("{{pascalName}} fetched successfully", data));
+  }{{#if dependencyInjection}};{{/if}}
+
+  {{#if dependencyInjection}}getById = async (req, res) =>{{else}}static async getById(req, res){{/if}} {
+    const id = String(req.params.id);
+    {{#if hasService}}const data = await {{#if dependencyInjection}}this.{{camelName}}Service{{else}}{{pascalName}}Service{{/if}}.getById(id);{{else}}const data = { id };{{/if}}
+    return res.status(200).json(ApiResponse.success("{{singularPascalName}} fetched successfully", data));
+  }{{#if dependencyInjection}};{{/if}}
+
+  {{#if dependencyInjection}}create = async (req, res) =>{{else}}static async create(req, res){{/if}} {
+    {{#if hasService}}const data = await {{#if dependencyInjection}}this.{{camelName}}Service{{else}}{{pascalName}}Service{{/if}}.create(req.body);{{else}}const data = req.body;{{/if}}
+    return res.status(201).json(ApiResponse.success("{{singularPascalName}} created successfully", data));
+  }{{#if dependencyInjection}};{{/if}}
+
+  {{#if dependencyInjection}}update = async (req, res) =>{{else}}static async update(req, res){{/if}} {
+    const id = String(req.params.id);
+    {{#if hasService}}const data = await {{#if dependencyInjection}}this.{{camelName}}Service{{else}}{{pascalName}}Service{{/if}}.update(id, req.body);{{else}}const data = { id, ...req.body };{{/if}}
+    return res.status(200).json(ApiResponse.success("{{singularPascalName}} updated successfully", data));
+  }{{#if dependencyInjection}};{{/if}}
+
+  {{#if dependencyInjection}}remove = async (req, res) =>{{else}}static async remove(req, res){{/if}} {
+    const id = String(req.params.id);
+    {{#if hasService}}const data = await {{#if dependencyInjection}}this.{{camelName}}Service{{else}}{{pascalName}}Service{{/if}}.remove(id);{{else}}const data = { id };{{/if}}
+    return res.status(200).json(ApiResponse.success("{{singularPascalName}} deleted successfully", data));
+  }{{#if dependencyInjection}};{{/if}}
+  {{else}}
+  {{#if dependencyInjection}}index = async (_req, res) =>{{else}}static async index(_req, res){{/if}} {
+    return res.status(200).json(ApiResponse.success("{{pascalName}} module ready", []));
+  }{{#if dependencyInjection}};{{/if}}
+  {{/if}}
+}

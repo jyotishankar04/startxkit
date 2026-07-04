@@ -1,0 +1,19 @@
+import { Hono } from "hono";
+
+export const {{camelName}}Routes = new Hono();
+
+{{#if crud}}
+{{camelName}}Routes.get("/", (context) => context.json({ success: true, message: "{{pascalName}} fetched successfully", data: [] }, 200));
+{{camelName}}Routes.get("/:id", (context) => context.json({ success: true, message: "{{singularPascalName}} fetched successfully", data: { id: context.req.param("id") } }, 200));
+{{camelName}}Routes.post("/", async (context) => {
+  const payload = await context.req.json().catch(() => ({}));
+  return context.json({ success: true, message: "{{singularPascalName}} created successfully", data: payload }, 201);
+});
+{{camelName}}Routes.patch("/:id", async (context) => {
+  const payload = await context.req.json().catch(() => ({}));
+  return context.json({ success: true, message: "{{singularPascalName}} updated successfully", data: { id: context.req.param("id"), ...(typeof payload === "object" && payload !== null ? payload : {}) } }, 200);
+});
+{{camelName}}Routes.delete("/:id", (context) => context.json({ success: true, message: "{{singularPascalName}} deleted successfully", data: { id: context.req.param("id") } }, 200));
+{{else}}
+{{camelName}}Routes.get("/", (context) => context.json({ success: true, message: "{{pascalName}} module ready", data: [] }, 200));
+{{/if}}
